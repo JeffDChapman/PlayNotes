@@ -24,6 +24,12 @@ namespace PlayNotes
         public MyPiano()
         {
             InitializeComponent();
+            if (Control.ModifierKeys == Keys.Shift)
+            {
+                this.WindowState = FormWindowState.Normal;
+                this.Show();
+                Application.DoEvents();
+            }
             if (!this.Visible) { btnGo_Click(this, null);  }
         }
 
