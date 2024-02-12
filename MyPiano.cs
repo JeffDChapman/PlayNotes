@@ -186,6 +186,55 @@ namespace PlayNotes
             int logFreq10 = Convert.ToInt16(logFreq * freqNormalizer);
             return (float) (Math.Pow(10, ((double)logFreq10 / freqNormalizer)));
         }
+
+        private void tbMinFreq_ValueChanged(object sender, EventArgs e)
+        {
+            minFrequency = tbMinFreq.Value;
+            lblMinFreq.Text = "Min Freq: " + minFrequency.ToString();
+        }
+
+        private void tbMaxFreq_ValueChanged(object sender, EventArgs e)
+        {
+            maxFrequency = tbMaxFreq.Value;
+            lblMaxFreq.Text = "Max Freq: " + maxFrequency.ToString();
+        }
+
+        private void tbNoteDur_ValueChanged(object sender, EventArgs e)
+        {
+            minNoteDuration = tbNoteDur.Value;
+            lblNoteDur.Text = "Note Dur: " + minNoteDuration.ToString();
+        }
+
+        private void tbPhrases_ValueChanged(object sender, EventArgs e)
+        {
+            numOfPhrases = tbPhrases.Value;
+            lblPhrases.Text = "Phrases: " + numOfPhrases.ToString();
+        }
+
+        private void tbDensity_ValueChanged(object sender, EventArgs e)
+        {
+            freqNormalizer = tbDensity.Value;
+            lblNoteDensity.Text = "Note Density: " + freqNormalizer.ToString();
+        }
+
+        private void tbMinBar_ValueChanged(object sender, EventArgs e)
+        {
+            minBar = tbMinBar.Value;
+            lblMinBar.Text = "Min Bar Len: " + minBar.ToString();
+        }
+
+        private void tbMaxBar_ValueChanged(object sender, EventArgs e)
+        {
+            maxBar = tbMaxBar.Value;
+            lblMaxBar.Text = "Max Bar Len: " + maxBar.ToString();
+        }
+
+        private void tbSweep_ValueChanged(object sender, EventArgs e)
+        {
+            SweepSize = (float) tbSweep.Value / 100;
+            int sweepPct = (int)(SweepSize * 100);
+            lblSweep.Text = "Sweep: " + sweepPct.ToString() + "%";
+        }
     }
 }
 
