@@ -4,6 +4,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Data;
 
 namespace PlayNotes
 {
@@ -20,6 +21,8 @@ namespace PlayNotes
         private float SweepSize = 1.03f;
         private int minBarTime;
         private int BarMult;
+        private DataTable mySettings = new DataTable("saveSettings");
+        private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         private struct NoteStruct
             { public int NoteTime; public bool NoteRest; public double Notefrequency; }
@@ -28,20 +31,70 @@ namespace PlayNotes
         public MyPiano()
         {
             InitializeComponent();
+
+            mySettings.Columns.Add("minFrequency");
+            mySettings.Columns.Add("maxFrequency");
+            mySettings.Columns.Add("minNoteDuration");
+            mySettings.Columns.Add("numOfPhrases");
+            mySettings.Columns.Add("freqNormalizer");
+            mySettings.Columns.Add("minBar");
+            mySettings.Columns.Add("maxBar");
+            mySettings.Columns.Add("SweepSize");
+            GetSettings();
+
             if (Control.ModifierKeys == Keys.Shift)
             {
                 this.WindowState = FormWindowState.Normal;
                 this.Show();
                 Application.DoEvents();
             }
-            if (!this.Visible) { btnGo_Click(this, null);  }
+
+            if (!this.Visible) { btnGo_Click(this, null); }
+        }
+
+        private void SaveSettings()
+        {
+            mySettings.Clear();
+            DataRowCollection allRows = mySettings.Rows;
+            allRows.Add(minFrequency, maxFrequency, minNoteDuration, numOfPhrases,
+                freqNormalizer, minBar, maxBar, SweepSize);
+            mySettings.WriteXml(setDir + "Notes_Settings.xml");
+        }
+
+        private void GetSettings()
+        {
+            mySettings.Clear();
+            try { mySettings.ReadXml(setDir + "Notes_Settings.xml"); } catch { return; }
+            DataRowCollection allRows = mySettings.Rows;
+            DataRow theSettings = allRows[0];
+            minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
+            maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
+            minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
+            numOfPhrases = Convert.ToInt16(theSettings["numOfPhrases"]);
+            freqNormalizer = Convert.ToInt16(theSettings["freqNormalizer"]);
+            minBar = Convert.ToInt16(theSettings["minBar"]);
+            maxBar = Convert.ToInt16(theSettings["maxBar"]);
+            SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
+            tbMinFreq.Value = minFrequency;
+            tbMaxFreq.Value = maxFrequency;
+            tbNoteDur.Value = minNoteDuration;
+            tbPhrases.Value = numOfPhrases;
+            tbDensity.Value = freqNormalizer;
+            tbMinBar.Value = minBar;
+            tbMaxBar.Value = maxBar;
+            tbSweep.Value = (int)(SweepSize * 100);
         }
 
         private void btnGo_Click(object sender, EventArgs e)
         {
             if (btnGo.Text == "Go") { btnGo.Text = "Stop"; stopPressed = false; }
             else if (!cbContinuous.Checked)
-                { btnGo.Text = "Stop"; stopPressed = true; btnGo.Text = "Go"; return; }
+            {
+                stopPressed = true; 
+                btnGo.Text = "Go"; 
+                SaveSettings();
+                return; 
+            }
 
             // Create a new instance of WaveOutEvent
             using (var waveOut = new WaveOutEvent())
@@ -58,7 +111,7 @@ namespace PlayNotes
                 waveOut.Init(waveProvider);
 
                 // Random number generator
-                Random random = new Random();
+                Random random = new Random(Guid.NewGuid().GetHashCode());
 
                 // If bar sizes have a GCD, set up bar size timings
                 BarMult = 0;
@@ -99,6 +152,7 @@ namespace PlayNotes
                 {
                     // Cleanup
                     waveOut.Stop();
+                    SaveSettings();
                     this.Close();
                     Application.Exit();
                 }
@@ -144,7 +198,7 @@ namespace PlayNotes
             double frequency;
             if (BarMult == 0)
             {
-                int phraseLen = random.Next(3, (3 * maxBar / minBar) + 1);
+                int phraseLen = random.Next(2 * minBar, (2 * maxBar) + 1);
                 for (int i = 0; i < phraseLen; i++)
                 {
                     GetAnote(random, out playTime, out playRest, out frequency);
@@ -157,7 +211,7 @@ namespace PlayNotes
                 return;
             }
             int totalTime = 0; int thisBarLen = random.Next(1, BarMult + 1) * minBar;
-            while (totalTime < thisBarLen * minNoteDuration)
+            while (totalTime < thisBarLen * minNoteDuration * 2)
             {
                 GetAnote(random, out playTime, out playRest, out frequency);
                 NoteStruct myNote = new NoteStruct();

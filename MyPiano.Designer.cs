@@ -58,12 +58,13 @@
             // 
             // btnGo
             // 
+            this.btnGo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.btnGo.Location = new System.Drawing.Point(475, 449);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(100, 52);
             this.btnGo.TabIndex = 0;
             this.btnGo.Text = "Go";
-            this.btnGo.UseVisualStyleBackColor = true;
+            this.btnGo.UseVisualStyleBackColor = false;
             this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
             // 
             // cbContinuous
