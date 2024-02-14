@@ -10,6 +10,7 @@ namespace PlayNotes
 {
     public partial class MyPiano : Form
     {
+        #region Private Variables
         private bool stopPressed;
         private int minFrequency = 300;
         private int maxFrequency = 1200;
@@ -23,6 +24,7 @@ namespace PlayNotes
         private int BarMult;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        #endregion
 
         private struct NoteStruct
             { public int NoteTime; public bool NoteRest; public double Notefrequency; }
@@ -90,12 +92,17 @@ namespace PlayNotes
             if (btnGo.Text == "Go") { btnGo.Text = "Stop"; stopPressed = false; }
             else if (!cbContinuous.Checked)
             {
-                stopPressed = true; 
-                btnGo.Text = "Go"; 
+                stopPressed = true;
+                btnGo.Text = "Go";
                 SaveSettings();
-                return; 
+                return;
             }
 
+            MakeMusic();
+        }
+
+        private void MakeMusic()
+        {
             // Create a new instance of WaveOutEvent
             using (var waveOut = new WaveOutEvent())
             {
@@ -113,51 +120,61 @@ namespace PlayNotes
                 // Random number generator
                 Random random = new Random(Guid.NewGuid().GetHashCode());
 
-                // If bar sizes have a GCD, set up bar size timings
-                BarMult = 0;
-                int gcd = 1; int a = minBar; int b = maxBar;
-                while (a != 0 && b != 0) 
-                {
-                    if (a > b) a %= b;
-                    else  b %= a;
-                }
-                gcd = a | b;
-                if (gcd != 1) { BarMult = maxBar / gcd; }
-                Console.WriteLine("Using BarMult = " + BarMult.ToString());
-                minBarTime = minBar * minNoteDuration * 3;
+                ComputeBarTime();
 
                 // Generate and play random phrases
                 for (int i = 0; i < numOfPhrases; i++)
                 {
                     onePhrase = new List<NoteStruct>();
                     BuildNotePhrase(onePhrase, random);
-
-                    for (int k = 0; k < 2; k++)
-                    {
-                        for (int j = 0; j < onePhrase.Count; j++)
-                        { 
-                            unpackAndPlay(onePhrase[j], signalGenerator, waveOut);
-                            if (stopPressed) { waveOut.Stop(); return; }
-                        }
-                        Console.WriteLine("----------------");
-                        System.Threading.Thread.SpinWait(2000);
-                        System.Threading.Thread.Sleep(1000);
-                        waveOut.Stop();
-                        System.Threading.Thread.SpinWait(2000);
-                        System.Threading.Thread.Sleep(1000);
-                    }
+                    PlayPhraseTwice(waveOut, signalGenerator);
                 }
+
+                waveOut.Stop();
+                SaveSettings();
+
+                if (stopPressed) { return; }
 
                 if (!cbContinuous.Checked)
-                {
-                    // Cleanup
-                    waveOut.Stop();
-                    SaveSettings();
-                    this.Close();
-                    Application.Exit();
-                }
+                    { this.Close(); Application.Exit(); }
+
                 btnGo_Click(this, null);
             }
+        }
+
+        private void PlayPhraseTwice(WaveOutEvent waveOut, SignalGenerator signalGenerator)
+        {
+            for (int k = 0; k < 2; k++)
+            {
+                for (int j = 0; j < onePhrase.Count; j++)
+                {
+                    unpackAndPlay(onePhrase[j], signalGenerator, waveOut);
+                    if (stopPressed) { break; }
+                }
+                if (stopPressed) { break; }
+                Console.WriteLine("----------------");
+                System.Threading.Thread.SpinWait(2000);
+                System.Threading.Thread.Sleep(1000);
+                waveOut.Stop();
+                System.Threading.Thread.SpinWait(2000);
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+        private void ComputeBarTime()
+        {
+            // If bar sizes have a GCD, set up bar size timings
+            BarMult = 0;
+            int gcd = 1; int a = minBar; int b = maxBar;
+            while (a != 0 && b != 0)
+            {
+                if (a > b) a %= b;
+                else b %= a;
+            }
+            gcd = a | b;
+            if (gcd != 1) { BarMult = maxBar / gcd; }
+            Console.WriteLine("Using BarMult = " + BarMult.ToString());
+            minBarTime = minBar * minNoteDuration * 3;
         }
 
         private void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, WaveOutEvent waveOut)
@@ -196,7 +213,10 @@ namespace PlayNotes
             int playTime;
             bool playRest;
             double frequency;
-            if (BarMult == 0)
+            if (BarMult == 0) { PlayByLength(); }
+                else { PlayByTime(); }
+
+            void PlayByLength()
             {
                 int phraseLen = random.Next(2 * minBar, (2 * maxBar) + 1);
                 for (int i = 0; i < phraseLen; i++)
@@ -208,18 +228,21 @@ namespace PlayNotes
                     myNote.Notefrequency = frequency;
                     onePhrase.Add(myNote);
                 }
-                return;
             }
-            int totalTime = 0; int thisBarLen = random.Next(1, BarMult + 1) * minBar;
-            while (totalTime < thisBarLen * minNoteDuration * 2)
+
+            void PlayByTime()
             {
-                GetAnote(random, out playTime, out playRest, out frequency);
-                NoteStruct myNote = new NoteStruct();
-                myNote.NoteTime = playTime;
-                myNote.NoteRest = playRest;
-                myNote.Notefrequency = frequency;
-                onePhrase.Add(myNote);
-                totalTime += playTime;
+                int totalTime = 0; int thisBarLen = random.Next(1, BarMult + 1) * minBar;
+                while (totalTime < thisBarLen * minNoteDuration * 2)
+                {
+                    GetAnote(random, out playTime, out playRest, out frequency);
+                    NoteStruct myNote = new NoteStruct();
+                    myNote.NoteTime = playTime;
+                    myNote.NoteRest = playRest;
+                    myNote.Notefrequency = frequency;
+                    onePhrase.Add(myNote);
+                    totalTime += playTime;
+                }
             }
         }
 
