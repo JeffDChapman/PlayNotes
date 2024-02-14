@@ -22,6 +22,7 @@ namespace PlayNotes
         private int minBarTime;
         private int BarMult;
         private DataTable mySettings = new DataTable("saveSettings");
+        private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         private struct NoteStruct
             { public int NoteTime; public bool NoteRest; public double Notefrequency; }
@@ -57,13 +58,13 @@ namespace PlayNotes
             DataRowCollection allRows = mySettings.Rows;
             allRows.Add(minFrequency, maxFrequency, minNoteDuration, numOfPhrases,
                 freqNormalizer, minBar, maxBar, SweepSize);
-            mySettings.WriteXml("Notes_Settings.xml");
+            mySettings.WriteXml(setDir + "Notes_Settings.xml");
         }
 
         private void GetSettings()
         {
             mySettings.Clear();
-            try { mySettings.ReadXml("Notes_Settings.xml"); } catch { return; }
+            try { mySettings.ReadXml(setDir + "Notes_Settings.xml"); } catch { return; }
             DataRowCollection allRows = mySettings.Rows;
             DataRow theSettings = allRows[0];
             minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
@@ -110,7 +111,7 @@ namespace PlayNotes
                 waveOut.Init(waveProvider);
 
                 // Random number generator
-                Random random = new Random();
+                Random random = new Random(Guid.NewGuid().GetHashCode());
 
                 // If bar sizes have a GCD, set up bar size timings
                 BarMult = 0;
