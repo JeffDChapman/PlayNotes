@@ -14,8 +14,8 @@ namespace PlayNotes
         private bool stopPressed;
         private int minFrequency = 300;
         private int maxFrequency = 1200;
-        private int minNoteDuration = 500;
-        private int numOfPhrases = 6;
+        private int minNoteDuration = 300;
+        private int numOfPhrases = 3;
         private int freqNormalizer = 16;
         private int minBar = 2;
         private int maxBar = 4;
@@ -23,6 +23,7 @@ namespace PlayNotes
         private int minBarTime;
         private int BarMult;
         private int oldUpDown = 20;
+        private string playKey = "A";
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -43,6 +44,7 @@ namespace PlayNotes
             mySettings.Columns.Add("minBar");
             mySettings.Columns.Add("maxBar");
             mySettings.Columns.Add("SweepSize");
+            mySettings.Columns.Add("playKey");
             GetSettings();
 
             if (Control.ModifierKeys == Keys.Shift)
@@ -60,14 +62,14 @@ namespace PlayNotes
             mySettings.Clear();
             DataRowCollection allRows = mySettings.Rows;
             allRows.Add(minFrequency, maxFrequency, minNoteDuration, numOfPhrases,
-                freqNormalizer, minBar, maxBar, SweepSize);
-            mySettings.WriteXml(setDir + "Notes_Settings.xml");
+                freqNormalizer, minBar, maxBar, SweepSize, playKey);
+            mySettings.WriteXml(setDir + "\\Notes_Settings.xml");
         }
 
         private void GetSettings()
         {
             mySettings.Clear();
-            try { mySettings.ReadXml(setDir + "Notes_Settings.xml"); } catch { return; }
+            try { mySettings.ReadXml(setDir + "\\Notes_Settings.xml"); } catch { return; }
             DataRowCollection allRows = mySettings.Rows;
             DataRow theSettings = allRows[0];
             minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
@@ -78,6 +80,7 @@ namespace PlayNotes
             minBar = Convert.ToInt16(theSettings["minBar"]);
             maxBar = Convert.ToInt16(theSettings["maxBar"]);
             SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
+            playKey = theSettings["playKey"].ToString();
             tbMinFreq.Value = minFrequency;
             tbMaxFreq.Value = maxFrequency;
             tbNoteDur.Value = minNoteDuration;
@@ -85,7 +88,7 @@ namespace PlayNotes
             tbDensity.Value = freqNormalizer;
             tbMinBar.Value = minBar;
             tbMaxBar.Value = maxBar;
-            tbSweep.Value = (int)(SweepSize * 100);
+            tbSweep.Value = (int)((SweepSize + .01) * 100);
         }
 
         private void btnGo_Click(object sender, EventArgs e)
@@ -318,14 +321,23 @@ namespace PlayNotes
         {
             int newVal = (int)upDownKey.Value;
             int oldLowFreq = tbMinFreq.Value;
+            int oldHighFreq = tbMaxFreq.Value; 
             int newFreq;
-            if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldLowFreq, "higher"); }
+
+            try
+            {
+                if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldLowFreq, "higher"); }
                 else { newFreq = ComputeNewFreq(oldLowFreq, "lower"); }
-            tbMinFreq.Value = newFreq;
-            int oldHighFreq = tbMaxFreq.Value;
-            if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldHighFreq, "higher"); }
+                tbMinFreq.Value = newFreq;
+                if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldHighFreq, "higher"); }
                 else { newFreq = ComputeNewFreq(oldHighFreq, "lower"); }
-            tbMaxFreq.Value = newFreq;
+                tbMaxFreq.Value = newFreq;
+            }
+            catch
+            {
+                tbMinFreq.Value = oldLowFreq;
+                tbMaxFreq.Value = oldHighFreq;
+            }
 
             oldUpDown = newVal;
             return;
@@ -333,11 +345,11 @@ namespace PlayNotes
             int ComputeNewFreq(int freqIn, string direction)
             {
                 double logFreq = Math.Log10(freqIn);
-                int logFreq10;
+                double logFreq10;
                 if (direction == "higher")
-                    { logFreq10 = Convert.ToInt16(logFreq * freqNormalizer) + 1; }
+                    { logFreq10 = Convert.ToDouble(logFreq * freqNormalizer) + .5; }
                 else
-                    { logFreq10 = Convert.ToInt16(logFreq * freqNormalizer) - 1; }
+                    { logFreq10 = Convert.ToDouble(logFreq * freqNormalizer) - .5; }
                 int freqBack = (int)(Math.Pow(10, ((double)logFreq10 / freqNormalizer)));
                 return freqBack;
             }
