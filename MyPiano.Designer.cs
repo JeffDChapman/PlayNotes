@@ -46,6 +46,10 @@
             this.tbMaxBar = new System.Windows.Forms.TrackBar();
             this.lblSweep = new System.Windows.Forms.Label();
             this.tbSweep = new System.Windows.Forms.TrackBar();
+            this.lblKey = new System.Windows.Forms.Label();
+            this.tbKey = new System.Windows.Forms.TextBox();
+            this.upDownKey = new System.Windows.Forms.NumericUpDown();
+            this.btnSaveKey = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNoteDur)).BeginInit();
@@ -54,6 +58,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMinBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSweep)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.upDownKey)).BeginInit();
             this.SuspendLayout();
             // 
             // btnGo
@@ -253,11 +258,57 @@
             this.tbSweep.Value = 103;
             this.tbSweep.ValueChanged += new System.EventHandler(this.tbSweep_ValueChanged);
             // 
+            // lblKey
+            // 
+            this.lblKey.AutoSize = true;
+            this.lblKey.Location = new System.Drawing.Point(22, 458);
+            this.lblKey.Name = "lblKey";
+            this.lblKey.Size = new System.Drawing.Size(39, 20);
+            this.lblKey.TabIndex = 18;
+            this.lblKey.Text = "Key:";
+            // 
+            // tbKey
+            // 
+            this.tbKey.BackColor = System.Drawing.Color.Silver;
+            this.tbKey.ForeColor = System.Drawing.Color.Navy;
+            this.tbKey.Location = new System.Drawing.Point(69, 456);
+            this.tbKey.Name = "tbKey";
+            this.tbKey.Size = new System.Drawing.Size(38, 26);
+            this.tbKey.TabIndex = 19;
+            this.tbKey.Text = "A";
+            // 
+            // upDownKey
+            // 
+            this.upDownKey.Location = new System.Drawing.Point(115, 456);
+            this.upDownKey.Name = "upDownKey";
+            this.upDownKey.Size = new System.Drawing.Size(26, 26);
+            this.upDownKey.TabIndex = 20;
+            this.upDownKey.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.upDownKey.ValueChanged += new System.EventHandler(this.upDownKey_ValueChanged);
+            // 
+            // btnSaveKey
+            // 
+            this.btnSaveKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnSaveKey.Location = new System.Drawing.Point(160, 452);
+            this.btnSaveKey.Name = "btnSaveKey";
+            this.btnSaveKey.Size = new System.Drawing.Size(87, 34);
+            this.btnSaveKey.TabIndex = 21;
+            this.btnSaveKey.Text = "Save";
+            this.btnSaveKey.UseVisualStyleBackColor = true;
+            // 
             // MyPiano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(612, 560);
+            this.Controls.Add(this.btnSaveKey);
+            this.Controls.Add(this.upDownKey);
+            this.Controls.Add(this.tbKey);
+            this.Controls.Add(this.lblKey);
             this.Controls.Add(this.lblSweep);
             this.Controls.Add(this.tbSweep);
             this.Controls.Add(this.lblMaxBar);
@@ -287,6 +338,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMinBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSweep)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.upDownKey)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,6 +364,10 @@
         private System.Windows.Forms.TrackBar tbMaxBar;
         private System.Windows.Forms.Label lblSweep;
         private System.Windows.Forms.TrackBar tbSweep;
+        private System.Windows.Forms.Label lblKey;
+        private System.Windows.Forms.TextBox tbKey;
+        private System.Windows.Forms.NumericUpDown upDownKey;
+        private System.Windows.Forms.Button btnSaveKey;
     }
 }
 

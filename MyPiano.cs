@@ -22,6 +22,7 @@ namespace PlayNotes
         private float SweepSize = 1.03f;
         private int minBarTime;
         private int BarMult;
+        private int oldUpDown = 20;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -312,6 +313,37 @@ namespace PlayNotes
             int sweepPct = (int)(SweepSize * 100);
             lblSweep.Text = "Sweep: " + sweepPct.ToString() + "%";
         }
+
+        private void upDownKey_ValueChanged(object sender, EventArgs e)
+        {
+            int newVal = (int)upDownKey.Value;
+            int oldLowFreq = tbMinFreq.Value;
+            int newFreq;
+            if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldLowFreq, "higher"); }
+                else { newFreq = ComputeNewFreq(oldLowFreq, "lower"); }
+            tbMinFreq.Value = newFreq;
+            int oldHighFreq = tbMaxFreq.Value;
+            if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldHighFreq, "higher"); }
+                else { newFreq = ComputeNewFreq(oldHighFreq, "lower"); }
+            tbMaxFreq.Value = newFreq;
+
+            oldUpDown = newVal;
+            return;
+
+            int ComputeNewFreq(int freqIn, string direction)
+            {
+                double logFreq = Math.Log10(freqIn);
+                int logFreq10;
+                if (direction == "higher")
+                    { logFreq10 = Convert.ToInt16(logFreq * freqNormalizer) + 1; }
+                else
+                    { logFreq10 = Convert.ToInt16(logFreq * freqNormalizer) - 1; }
+                int freqBack = (int)(Math.Pow(10, ((double)logFreq10 / freqNormalizer)));
+                return freqBack;
+            }
+        }
+
+        
     }
 }
 
