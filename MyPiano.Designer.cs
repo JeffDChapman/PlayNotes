@@ -299,6 +299,7 @@
             this.btnSaveKey.TabIndex = 21;
             this.btnSaveKey.Text = "Save";
             this.btnSaveKey.UseVisualStyleBackColor = true;
+            this.btnSaveKey.Click += new System.EventHandler(this.btnSaveKey_Click);
             // 
             // MyPiano
             // 

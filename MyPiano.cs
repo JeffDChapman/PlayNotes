@@ -24,6 +24,7 @@ namespace PlayNotes
         private int BarMult;
         private int oldUpDown = 20;
         private string playKey = "A";
+        private bool prevRest = false;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -31,6 +32,19 @@ namespace PlayNotes
         private struct NoteStruct
             { public int NoteTime; public bool NoteRest; public double Notefrequency; }
         private List<NoteStruct> onePhrase;
+
+        private struct settingsStruct
+        {
+            public int minFrequency;
+            public int maxFrequency ;
+            public int minNoteDuration;
+            public int numOfPhrases;
+            public int freqNormalizer;
+            public int minBar;
+            public int maxBar;
+            public string playKey;
+        }
+        private List<settingsStruct> keySettings = new List<settingsStruct>();
 
         public MyPiano()
         {
@@ -150,9 +164,11 @@ namespace PlayNotes
         {
             for (int k = 0; k < 2; k++)
             {
+                bool nearEnd = false;
                 for (int j = 0; j < onePhrase.Count; j++)
                 {
-                    unpackAndPlay(onePhrase[j], signalGenerator, waveOut);
+                    if (j == onePhrase.Count - 1) { nearEnd= true; }
+                    unpackAndPlay(onePhrase[j], signalGenerator, waveOut, nearEnd);
                     if (stopPressed) { break; }
                 }
                 if (stopPressed) { break; }
@@ -181,7 +197,8 @@ namespace PlayNotes
             minBarTime = minBar * minNoteDuration * 3;
         }
 
-        private void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, WaveOutEvent waveOut)
+        private void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, 
+            WaveOutEvent waveOut, bool towardsEnd)
         {
             int playTime;
             bool playRest;
@@ -195,13 +212,17 @@ namespace PlayNotes
             signalGenerator.FrequencyEnd = frequency * SweepSize;
             Console.Write(signalGenerator.Frequency.ToString() + " ");
 
-            if (playRest)
+            bool okayToRest = false;
+            if ((!towardsEnd) || prevRest) { okayToRest = true; }
+
+            if (playRest && okayToRest)
             {
                 waveOut.Stop();
                 Console.WriteLine("X");
                 Console.Write("Rest ");
+                prevRest = true;
             }
-            else { waveOut.Play(); }
+            else { waveOut.Play(); prevRest = false; }
 
             // Wait for the duration of the note
 
@@ -355,7 +376,21 @@ namespace PlayNotes
             }
         }
 
-        
+        private void btnSaveKey_Click(object sender, EventArgs e)
+        {
+            settingsStruct keySaver = new settingsStruct();
+            keySaver.minFrequency = minFrequency; keySaver.maxFrequency = maxFrequency;
+            keySaver.minNoteDuration = minNoteDuration;
+            keySaver.numOfPhrases = numOfPhrases;
+            keySaver.freqNormalizer = freqNormalizer;
+            keySaver.minBar = minBar; keySaver.maxBar = maxBar;
+            keySaver.playKey = playKey;
+            keySettings.Add(keySaver);
+
+            int priorKeyNum = (int)(tbKey.Text.ToCharArray()[0]);
+            string newKey = char.ConvertFromUtf32(priorKeyNum + 1);
+            tbKey.Text = newKey;
+        }
     }
 }
 
