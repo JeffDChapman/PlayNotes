@@ -42,6 +42,7 @@ namespace PlayNotes
             public int freqNormalizer;
             public int minBar;
             public int maxBar;
+            public float SweepSize;
             public string playKey;
         }
         private List<settingsStruct> keySettings = new List<settingsStruct>();
@@ -75,8 +76,12 @@ namespace PlayNotes
         {
             mySettings.Clear();
             DataRowCollection allRows = mySettings.Rows;
-            allRows.Add(minFrequency, maxFrequency, minNoteDuration, numOfPhrases,
-                freqNormalizer, minBar, maxBar, SweepSize, playKey);
+            foreach (settingsStruct oneKey in keySettings)
+            {
+                allRows.Add(oneKey.minFrequency, oneKey.maxFrequency, oneKey.minNoteDuration, 
+                    oneKey.numOfPhrases, oneKey.freqNormalizer, oneKey.minBar, oneKey.maxBar, 
+                    oneKey.SweepSize, oneKey.playKey);
+            }
             mySettings.WriteXml(setDir + "\\Notes_Settings.xml");
         }
 
@@ -85,16 +90,23 @@ namespace PlayNotes
             mySettings.Clear();
             try { mySettings.ReadXml(setDir + "\\Notes_Settings.xml"); } catch { return; }
             DataRowCollection allRows = mySettings.Rows;
-            DataRow theSettings = allRows[0];
-            minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
-            maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
-            minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
-            numOfPhrases = Convert.ToInt16(theSettings["numOfPhrases"]);
-            freqNormalizer = Convert.ToInt16(theSettings["freqNormalizer"]);
-            minBar = Convert.ToInt16(theSettings["minBar"]);
-            maxBar = Convert.ToInt16(theSettings["maxBar"]);
-            SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
-            playKey = theSettings["playKey"].ToString();
+
+            keySettings.Clear();
+            foreach (DataRow oneRow in allRows)
+            {
+                DataRow theSettings = oneRow;
+                minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
+                maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
+                minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
+                numOfPhrases = Convert.ToInt16(theSettings["numOfPhrases"]);
+                freqNormalizer = Convert.ToInt16(theSettings["freqNormalizer"]);
+                minBar = Convert.ToInt16(theSettings["minBar"]);
+                maxBar = Convert.ToInt16(theSettings["maxBar"]);
+                SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
+                playKey = theSettings["playKey"].ToString();
+                AddKeyToSettingsList();
+            }
+            
             tbMinFreq.Value = minFrequency;
             tbMaxFreq.Value = maxFrequency;
             tbNoteDur.Value = minNoteDuration;
@@ -103,6 +115,21 @@ namespace PlayNotes
             tbMinBar.Value = minBar;
             tbMaxBar.Value = maxBar;
             tbSweep.Value = (int)((SweepSize + .01) * 100);
+            tbKey.Text = playKey;
+            BumpKey();
+        }
+
+        private void AddKeyToSettingsList()
+        {
+            settingsStruct keySaver = new settingsStruct();
+            keySaver.minFrequency = minFrequency; keySaver.maxFrequency = maxFrequency;
+            keySaver.minNoteDuration = minNoteDuration;
+            keySaver.numOfPhrases = numOfPhrases;
+            keySaver.freqNormalizer = freqNormalizer;
+            keySaver.minBar = minBar; keySaver.maxBar = maxBar;
+            keySaver.SweepSize = SweepSize;
+            keySaver.playKey = playKey;
+            keySettings.Add(keySaver);
         }
 
         private void btnGo_Click(object sender, EventArgs e)
@@ -378,18 +405,16 @@ namespace PlayNotes
 
         private void btnSaveKey_Click(object sender, EventArgs e)
         {
-            settingsStruct keySaver = new settingsStruct();
-            keySaver.minFrequency = minFrequency; keySaver.maxFrequency = maxFrequency;
-            keySaver.minNoteDuration = minNoteDuration;
-            keySaver.numOfPhrases = numOfPhrases;
-            keySaver.freqNormalizer = freqNormalizer;
-            keySaver.minBar = minBar; keySaver.maxBar = maxBar;
-            keySaver.playKey = playKey;
-            keySettings.Add(keySaver);
+            AddKeyToSettingsList();
+            BumpKey();
+        }
 
+        private void BumpKey()
+        {
             int priorKeyNum = (int)(tbKey.Text.ToCharArray()[0]);
             string newKey = char.ConvertFromUtf32(priorKeyNum + 1);
             tbKey.Text = newKey;
+            playKey = newKey;
         }
     }
 }
