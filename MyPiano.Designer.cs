@@ -64,18 +64,18 @@
             // btnGo
             // 
             this.btnGo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnGo.Location = new System.Drawing.Point(475, 449);
+            this.btnGo.Location = new System.Drawing.Point(455, 449);
             this.btnGo.Name = "btnGo";
-            this.btnGo.Size = new System.Drawing.Size(100, 52);
+            this.btnGo.Size = new System.Drawing.Size(121, 52);
             this.btnGo.TabIndex = 0;
-            this.btnGo.Text = "Go";
+            this.btnGo.Text = "Play Phrase";
             this.btnGo.UseVisualStyleBackColor = false;
             this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
             // 
             // cbContinuous
             // 
             this.cbContinuous.AutoSize = true;
-            this.cbContinuous.Location = new System.Drawing.Point(467, 520);
+            this.cbContinuous.Location = new System.Drawing.Point(457, 520);
             this.cbContinuous.Name = "cbContinuous";
             this.cbContinuous.Size = new System.Drawing.Size(116, 24);
             this.cbContinuous.TabIndex = 1;
@@ -263,9 +263,9 @@
             this.lblKey.AutoSize = true;
             this.lblKey.Location = new System.Drawing.Point(22, 458);
             this.lblKey.Name = "lblKey";
-            this.lblKey.Size = new System.Drawing.Size(39, 20);
+            this.lblKey.Size = new System.Drawing.Size(44, 20);
             this.lblKey.TabIndex = 18;
-            this.lblKey.Text = "Key:";
+            this.lblKey.Text = "Gen:";
             // 
             // tbKey
             // 

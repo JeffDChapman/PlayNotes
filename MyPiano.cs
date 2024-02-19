@@ -23,10 +23,11 @@ namespace PlayNotes
         private int minBarTime;
         private int BarMult;
         private int oldUpDown = 20;
-        private string playKey = "A";
+        private string Generator = "A";
         private string highestUnusedKey = "A";
         private bool prevRest = false;
         private bool stillLoading = true;
+        private bool firstTimeFlag = false;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -45,7 +46,7 @@ namespace PlayNotes
             public int minBar;
             public int maxBar;
             public float SweepSize;
-            public string playKey;
+            public string Generator;
         }
         private List<settingsStruct> keySettings = new List<settingsStruct>();
 
@@ -62,7 +63,7 @@ namespace PlayNotes
             mySettings.Columns.Add("minBar");
             mySettings.Columns.Add("maxBar");
             mySettings.Columns.Add("SweepSize");
-            mySettings.Columns.Add("playKey");
+            mySettings.Columns.Add("Generator");
             GetSettings();
 
             if (Control.ModifierKeys == Keys.Shift)
@@ -83,15 +84,23 @@ namespace PlayNotes
             {
                 allRows.Add(oneKey.minFrequency, oneKey.maxFrequency, oneKey.minNoteDuration, 
                     oneKey.numOfPhrases, oneKey.freqNormalizer, oneKey.minBar, oneKey.maxBar, 
-                    oneKey.SweepSize, oneKey.playKey);
+                    oneKey.SweepSize, oneKey.Generator);
             }
-            mySettings.WriteXml(setDir + "\\Notes_Settings.xml");
+            DataTable xmlOut = null;
+            mySettings.DefaultView.Sort = "Generator";
+            xmlOut = mySettings.DefaultView.ToTable();
+            xmlOut.WriteXml(setDir + "\\Notes_Settings.xml");
         }
 
         private void GetSettings()
         {
             mySettings.Clear();
-            try { mySettings.ReadXml(setDir + "\\Notes_Settings.xml"); } catch { return; }
+            try { mySettings.ReadXml(setDir + "\\Notes_Settings.xml"); } 
+            catch 
+            {
+                firstTimeFlag = true; 
+                return; 
+            }
             DataRowCollection allRows = mySettings.Rows;
 
             keySettings.Clear();
@@ -99,13 +108,13 @@ namespace PlayNotes
             {
                 DataRow theSettings = oneRow;
                 SettingsFromDatarow(theSettings);
-                playKey = theSettings["playKey"].ToString();
+                Generator = theSettings["Generator"].ToString();
                 AddKeyToSettingsList();
             }
 
             SetTheSliders();
-            tbKey.Text = playKey;
-            BumpKey();
+            tbKey.Text = Generator;
+            BumpGen();
             stillLoading = false;
         }
 
@@ -142,21 +151,22 @@ namespace PlayNotes
             keySaver.freqNormalizer = freqNormalizer;
             keySaver.minBar = minBar; keySaver.maxBar = maxBar;
             keySaver.SweepSize = SweepSize;
-            keySaver.playKey = playKey;
+            keySaver.Generator = Generator;
             keySettings.Add(keySaver);
         }
 
         private void btnGo_Click(object sender, EventArgs e)
         {
-            if (btnGo.Text == "Go") { btnGo.Text = "Stop"; stopPressed = false; }
+            if (btnGo.Text == "Play Phrase") { btnGo.Text = "Stop"; stopPressed = false; }
             else if (!cbContinuous.Checked)
             {
                 stopPressed = true;
-                btnGo.Text = "Go";
+                btnGo.Text = "Play Phrase";
                 SaveSettings();
                 return;
             }
 
+            if (firstTimeFlag) { btnSaveKey_Click(this, null); firstTimeFlag = false; }
             MakeMusic();
         }
 
@@ -421,15 +431,15 @@ namespace PlayNotes
         {
             // TODO: if key already exists, replace it
             AddKeyToSettingsList();
-            BumpKey();
+            BumpGen();
         }
 
-        private void BumpKey()
+        private void BumpGen()
         {
             int priorKeyNum = (int)(tbKey.Text.ToCharArray()[0]);
             string newKey = char.ConvertFromUtf32(priorKeyNum + 1);
             tbKey.Text = newKey;
-            playKey = newKey;
+            Generator = newKey;
             highestUnusedKey = newKey;
         }
 
@@ -441,9 +451,9 @@ namespace PlayNotes
             int hUK = (int)(highestUnusedKey.ToCharArray()[0]);
             if (KeyNum > hUK) { tbKey.Text = highestUnusedKey; return; }
             tbKey.Text = tbKey.Text.ToUpper();
-            playKey = tbKey.Text;
+            Generator = tbKey.Text;
             // locate the settings for this key and implement them
-            DataRow[] theSettings = mySettings.Select("playKey = '" + playKey + "'");
+            DataRow[] theSettings = mySettings.Select("Generator = '" + Generator + "'");
             SettingsFromDatarow(theSettings[0]);
             SetTheSliders();
         }
