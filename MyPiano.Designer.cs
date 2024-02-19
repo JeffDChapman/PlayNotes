@@ -276,6 +276,7 @@
             this.tbKey.Size = new System.Drawing.Size(38, 26);
             this.tbKey.TabIndex = 19;
             this.tbKey.Text = "A";
+            this.tbKey.TextChanged += new System.EventHandler(this.tbKey_TextChanged);
             // 
             // upDownKey
             // 

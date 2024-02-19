@@ -24,7 +24,9 @@ namespace PlayNotes
         private int BarMult;
         private int oldUpDown = 20;
         private string playKey = "A";
+        private string highestUnusedKey = "A";
         private bool prevRest = false;
+        private bool stillLoading = true;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -46,6 +48,7 @@ namespace PlayNotes
             public string playKey;
         }
         private List<settingsStruct> keySettings = new List<settingsStruct>();
+
 
         public MyPiano()
         {
@@ -95,18 +98,31 @@ namespace PlayNotes
             foreach (DataRow oneRow in allRows)
             {
                 DataRow theSettings = oneRow;
-                minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
-                maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
-                minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
-                numOfPhrases = Convert.ToInt16(theSettings["numOfPhrases"]);
-                freqNormalizer = Convert.ToInt16(theSettings["freqNormalizer"]);
-                minBar = Convert.ToInt16(theSettings["minBar"]);
-                maxBar = Convert.ToInt16(theSettings["maxBar"]);
-                SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
+                SettingsFromDatarow(theSettings);
                 playKey = theSettings["playKey"].ToString();
                 AddKeyToSettingsList();
             }
-            
+
+            SetTheSliders();
+            tbKey.Text = playKey;
+            BumpKey();
+            stillLoading = false;
+        }
+
+        private void SettingsFromDatarow(DataRow theSettings)
+        {
+            minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
+            maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
+            minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
+            numOfPhrases = Convert.ToInt16(theSettings["numOfPhrases"]);
+            freqNormalizer = Convert.ToInt16(theSettings["freqNormalizer"]);
+            minBar = Convert.ToInt16(theSettings["minBar"]);
+            maxBar = Convert.ToInt16(theSettings["maxBar"]);
+            SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
+        }
+
+        private void SetTheSliders()
+        {
             tbMinFreq.Value = minFrequency;
             tbMaxFreq.Value = maxFrequency;
             tbNoteDur.Value = minNoteDuration;
@@ -115,8 +131,6 @@ namespace PlayNotes
             tbMinBar.Value = minBar;
             tbMaxBar.Value = maxBar;
             tbSweep.Value = (int)((SweepSize + .01) * 100);
-            tbKey.Text = playKey;
-            BumpKey();
         }
 
         private void AddKeyToSettingsList()
@@ -405,6 +419,7 @@ namespace PlayNotes
 
         private void btnSaveKey_Click(object sender, EventArgs e)
         {
+            // TODO: if key already exists, replace it
             AddKeyToSettingsList();
             BumpKey();
         }
@@ -415,7 +430,22 @@ namespace PlayNotes
             string newKey = char.ConvertFromUtf32(priorKeyNum + 1);
             tbKey.Text = newKey;
             playKey = newKey;
+            highestUnusedKey = newKey;
+        }
+
+        private void tbKey_TextChanged(object sender, EventArgs e)
+        {
+            if (stillLoading) return;
+            if (tbKey.Text.Length == 0) { return; }
+            int KeyNum = (int)(tbKey.Text.ToUpper().ToCharArray()[0]);
+            int hUK = (int)(highestUnusedKey.ToCharArray()[0]);
+            if (KeyNum > hUK) { tbKey.Text = highestUnusedKey; return; }
+            tbKey.Text = tbKey.Text.ToUpper();
+            playKey = tbKey.Text;
+            // locate the settings for this key and implement them
+            DataRow[] theSettings = mySettings.Select("playKey = '" + playKey + "'");
+            SettingsFromDatarow(theSettings[0]);
+            SetTheSliders();
         }
     }
 }
-
