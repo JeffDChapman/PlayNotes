@@ -24,6 +24,7 @@ namespace PlayNotes
         private int BarMult;
         private int oldUpDown = 20;
         private string Generator = "A";
+        private bool keyMatchesExisting;
         private string highestUnusedKey = "A";
         private bool prevRest = false;
         private bool stillLoading = true;
@@ -49,7 +50,7 @@ namespace PlayNotes
             public string Generator;
         }
         private List<settingsStruct> keySettings = new List<settingsStruct>();
-
+        private bool disableCascade;
 
         public MyPiano()
         {
@@ -114,7 +115,9 @@ namespace PlayNotes
 
             SetTheSliders();
             tbKey.Text = Generator;
-            BumpGen();
+            int thisKeyNum = (int)(Generator.ToCharArray()[0]);
+            string nextKey = char.ConvertFromUtf32(thisKeyNum + 1);
+            highestUnusedKey = nextKey;
             stillLoading = false;
         }
 
@@ -429,9 +432,24 @@ namespace PlayNotes
 
         private void btnSaveKey_Click(object sender, EventArgs e)
         {
-            // TODO: if key already exists, replace it
-            AddKeyToSettingsList();
-            BumpGen();
+            // if key doesn't already exists, add it
+            keyMatchesExisting = false;
+            int KeyNum = (int)(tbKey.Text.ToUpper().ToCharArray()[0]);
+            int hUK = (int)(highestUnusedKey.ToCharArray()[0]);
+            if (KeyNum < hUK) { keyMatchesExisting = true; }
+            if (!keyMatchesExisting)
+            {
+                AddKeyToSettingsList();
+                BumpGen(); return;
+            }
+            // find matching key and replace it
+            foreach (settingsStruct oneKey in keySettings)
+            {
+                if (oneKey.Generator != Generator) { continue; }
+                keySettings.Remove(oneKey);
+                AddKeyToSettingsList();
+                break;
+            }
         }
 
         private void BumpGen()
@@ -446,11 +464,17 @@ namespace PlayNotes
         private void tbKey_TextChanged(object sender, EventArgs e)
         {
             if (stillLoading) return;
+            if (disableCascade) { disableCascade = false; return; }
             if (tbKey.Text.Length == 0) { return; }
             int KeyNum = (int)(tbKey.Text.ToUpper().ToCharArray()[0]);
             int hUK = (int)(highestUnusedKey.ToCharArray()[0]);
-            if (KeyNum > hUK) { tbKey.Text = highestUnusedKey; return; }
-            tbKey.Text = tbKey.Text.ToUpper();
+            if (KeyNum >= hUK) 
+            {
+                disableCascade = true;
+                tbKey.Text = highestUnusedKey; 
+                return; 
+            }
+            tbKey.Text = tbKey.Text.ToUpper().Substring(0, 1);
             Generator = tbKey.Text;
             // locate the settings for this key and implement them
             DataRow[] theSettings = mySettings.Select("Generator = '" + Generator + "'");
