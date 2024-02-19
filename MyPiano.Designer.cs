@@ -50,6 +50,7 @@
             this.tbKey = new System.Windows.Forms.TextBox();
             this.upDownKey = new System.Windows.Forms.NumericUpDown();
             this.btnSaveKey = new System.Windows.Forms.Button();
+            this.btnNewKey = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNoteDur)).BeginInit();
@@ -89,7 +90,7 @@
             this.tbMinFreq.Maximum = 600;
             this.tbMinFreq.Minimum = 300;
             this.tbMinFreq.Name = "tbMinFreq";
-            this.tbMinFreq.Size = new System.Drawing.Size(442, 69);
+            this.tbMinFreq.Size = new System.Drawing.Size(391, 69);
             this.tbMinFreq.SmallChange = 2;
             this.tbMinFreq.TabIndex = 2;
             this.tbMinFreq.TickFrequency = 20;
@@ -121,7 +122,7 @@
             this.tbMaxFreq.Maximum = 1600;
             this.tbMaxFreq.Minimum = 600;
             this.tbMaxFreq.Name = "tbMaxFreq";
-            this.tbMaxFreq.Size = new System.Drawing.Size(442, 69);
+            this.tbMaxFreq.Size = new System.Drawing.Size(391, 69);
             this.tbMaxFreq.SmallChange = 10;
             this.tbMaxFreq.TabIndex = 4;
             this.tbMaxFreq.TickFrequency = 40;
@@ -280,9 +281,10 @@
             // 
             // upDownKey
             // 
-            this.upDownKey.Location = new System.Drawing.Point(115, 456);
+            this.upDownKey.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.upDownKey.Location = new System.Drawing.Point(552, 28);
             this.upDownKey.Name = "upDownKey";
-            this.upDownKey.Size = new System.Drawing.Size(26, 26);
+            this.upDownKey.Size = new System.Drawing.Size(26, 53);
             this.upDownKey.TabIndex = 20;
             this.upDownKey.Value = new decimal(new int[] {
             20,
@@ -294,7 +296,7 @@
             // btnSaveKey
             // 
             this.btnSaveKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnSaveKey.Location = new System.Drawing.Point(160, 452);
+            this.btnSaveKey.Location = new System.Drawing.Point(122, 452);
             this.btnSaveKey.Name = "btnSaveKey";
             this.btnSaveKey.Size = new System.Drawing.Size(87, 34);
             this.btnSaveKey.TabIndex = 21;
@@ -302,11 +304,24 @@
             this.btnSaveKey.UseVisualStyleBackColor = true;
             this.btnSaveKey.Click += new System.EventHandler(this.btnSaveKey_Click);
             // 
+            // btnNewKey
+            // 
+            this.btnNewKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnNewKey.Location = new System.Drawing.Point(222, 452);
+            this.btnNewKey.Name = "btnNewKey";
+            this.btnNewKey.Size = new System.Drawing.Size(87, 34);
+            this.btnNewKey.TabIndex = 22;
+            this.btnNewKey.Text = "New";
+            this.btnNewKey.UseVisualStyleBackColor = true;
+            this.btnNewKey.Visible = false;
+            this.btnNewKey.Click += new System.EventHandler(this.btnNewKey_Click);
+            // 
             // MyPiano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(612, 560);
+            this.Controls.Add(this.btnNewKey);
             this.Controls.Add(this.btnSaveKey);
             this.Controls.Add(this.upDownKey);
             this.Controls.Add(this.tbKey);
@@ -370,6 +385,7 @@
         private System.Windows.Forms.TextBox tbKey;
         private System.Windows.Forms.NumericUpDown upDownKey;
         private System.Windows.Forms.Button btnSaveKey;
+        private System.Windows.Forms.Button btnNewKey;
     }
 }
 

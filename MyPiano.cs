@@ -29,6 +29,7 @@ namespace PlayNotes
         private bool prevRest = false;
         private bool stillLoading = true;
         private bool firstTimeFlag = false;
+        private bool disableCascade;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -50,7 +51,7 @@ namespace PlayNotes
             public string Generator;
         }
         private List<settingsStruct> keySettings = new List<settingsStruct>();
-        private bool disableCascade;
+
 
         public MyPiano()
         {
@@ -118,6 +119,7 @@ namespace PlayNotes
             int thisKeyNum = (int)(Generator.ToCharArray()[0]);
             string nextKey = char.ConvertFromUtf32(thisKeyNum + 1);
             highestUnusedKey = nextKey;
+            btnNewKey.Visible = true;
             stillLoading = false;
         }
 
@@ -459,6 +461,7 @@ namespace PlayNotes
             tbKey.Text = newKey;
             Generator = newKey;
             highestUnusedKey = newKey;
+            btnNewKey.Visible = false;
         }
 
         private void tbKey_TextChanged(object sender, EventArgs e)
@@ -480,6 +483,13 @@ namespace PlayNotes
             DataRow[] theSettings = mySettings.Select("Generator = '" + Generator + "'");
             SettingsFromDatarow(theSettings[0]);
             SetTheSliders();
+        }
+
+        private void btnNewKey_Click(object sender, EventArgs e)
+        {
+            tbKey.Text = highestUnusedKey;
+            Generator = highestUnusedKey;
+            btnNewKey.Visible = false;
         }
     }
 }
