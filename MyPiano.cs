@@ -14,14 +14,21 @@ namespace PlayNotes
         private bool stopPressed;
         private int minFrequency = 300;
         private int maxFrequency = 1200;
-        private int minNoteDuration = 500;
-        private int numOfPhrases = 6;
+        private int minNoteDuration = 300;
+        private int numOfPhrases = 3;
         private int freqNormalizer = 16;
         private int minBar = 2;
         private int maxBar = 4;
         private float SweepSize = 1.03f;
         private int minBarTime;
         private int BarMult;
+        private int oldUpDown = 20;
+        private string Generator = "A";
+        private bool keyMatchesExisting;
+        private string highestUnusedKey = "A";
+        private bool prevRest = false;
+        private bool stillLoading = true;
+        private bool firstTimeFlag = false;
         private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
@@ -29,6 +36,21 @@ namespace PlayNotes
         private struct NoteStruct
             { public int NoteTime; public bool NoteRest; public double Notefrequency; }
         private List<NoteStruct> onePhrase;
+
+        private struct settingsStruct
+        {
+            public int minFrequency;
+            public int maxFrequency ;
+            public int minNoteDuration;
+            public int numOfPhrases;
+            public int freqNormalizer;
+            public int minBar;
+            public int maxBar;
+            public float SweepSize;
+            public string Generator;
+        }
+        private List<settingsStruct> keySettings = new List<settingsStruct>();
+        private bool disableCascade;
 
         public MyPiano()
         {
@@ -42,6 +64,7 @@ namespace PlayNotes
             mySettings.Columns.Add("minBar");
             mySettings.Columns.Add("maxBar");
             mySettings.Columns.Add("SweepSize");
+            mySettings.Columns.Add("Generator");
             GetSettings();
 
             if (Control.ModifierKeys == Keys.Shift)
@@ -58,17 +81,48 @@ namespace PlayNotes
         {
             mySettings.Clear();
             DataRowCollection allRows = mySettings.Rows;
-            allRows.Add(minFrequency, maxFrequency, minNoteDuration, numOfPhrases,
-                freqNormalizer, minBar, maxBar, SweepSize);
-            mySettings.WriteXml(setDir + "Notes_Settings.xml");
+            foreach (settingsStruct oneKey in keySettings)
+            {
+                allRows.Add(oneKey.minFrequency, oneKey.maxFrequency, oneKey.minNoteDuration, 
+                    oneKey.numOfPhrases, oneKey.freqNormalizer, oneKey.minBar, oneKey.maxBar, 
+                    oneKey.SweepSize, oneKey.Generator);
+            }
+            DataTable xmlOut = null;
+            mySettings.DefaultView.Sort = "Generator";
+            xmlOut = mySettings.DefaultView.ToTable();
+            xmlOut.WriteXml(setDir + "\\Notes_Settings.xml");
         }
 
         private void GetSettings()
         {
             mySettings.Clear();
-            try { mySettings.ReadXml(setDir + "Notes_Settings.xml"); } catch { return; }
+            try { mySettings.ReadXml(setDir + "\\Notes_Settings.xml"); } 
+            catch 
+            {
+                firstTimeFlag = true; 
+                return; 
+            }
             DataRowCollection allRows = mySettings.Rows;
-            DataRow theSettings = allRows[0];
+
+            keySettings.Clear();
+            foreach (DataRow oneRow in allRows)
+            {
+                DataRow theSettings = oneRow;
+                SettingsFromDatarow(theSettings);
+                Generator = theSettings["Generator"].ToString();
+                AddKeyToSettingsList();
+            }
+
+            SetTheSliders();
+            tbKey.Text = Generator;
+            int thisKeyNum = (int)(Generator.ToCharArray()[0]);
+            string nextKey = char.ConvertFromUtf32(thisKeyNum + 1);
+            highestUnusedKey = nextKey;
+            stillLoading = false;
+        }
+
+        private void SettingsFromDatarow(DataRow theSettings)
+        {
             minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
             maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
             minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
@@ -77,6 +131,10 @@ namespace PlayNotes
             minBar = Convert.ToInt16(theSettings["minBar"]);
             maxBar = Convert.ToInt16(theSettings["maxBar"]);
             SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
+        }
+
+        private void SetTheSliders()
+        {
             tbMinFreq.Value = minFrequency;
             tbMaxFreq.Value = maxFrequency;
             tbNoteDur.Value = minNoteDuration;
@@ -84,20 +142,34 @@ namespace PlayNotes
             tbDensity.Value = freqNormalizer;
             tbMinBar.Value = minBar;
             tbMaxBar.Value = maxBar;
-            tbSweep.Value = (int)(SweepSize * 100);
+            tbSweep.Value = (int)((SweepSize + .01) * 100);
+        }
+
+        private void AddKeyToSettingsList()
+        {
+            settingsStruct keySaver = new settingsStruct();
+            keySaver.minFrequency = minFrequency; keySaver.maxFrequency = maxFrequency;
+            keySaver.minNoteDuration = minNoteDuration;
+            keySaver.numOfPhrases = numOfPhrases;
+            keySaver.freqNormalizer = freqNormalizer;
+            keySaver.minBar = minBar; keySaver.maxBar = maxBar;
+            keySaver.SweepSize = SweepSize;
+            keySaver.Generator = Generator;
+            keySettings.Add(keySaver);
         }
 
         private void btnGo_Click(object sender, EventArgs e)
         {
-            if (btnGo.Text == "Go") { btnGo.Text = "Stop"; stopPressed = false; }
+            if (btnGo.Text == "Play Phrase") { btnGo.Text = "Stop"; stopPressed = false; }
             else if (!cbContinuous.Checked)
             {
                 stopPressed = true;
-                btnGo.Text = "Go";
+                btnGo.Text = "Play Phrase";
                 SaveSettings();
                 return;
             }
 
+            if (firstTimeFlag) { btnSaveKey_Click(this, null); firstTimeFlag = false; }
             MakeMusic();
         }
 
@@ -146,9 +218,11 @@ namespace PlayNotes
         {
             for (int k = 0; k < 2; k++)
             {
+                bool nearEnd = false;
                 for (int j = 0; j < onePhrase.Count; j++)
                 {
-                    unpackAndPlay(onePhrase[j], signalGenerator, waveOut);
+                    if (j == onePhrase.Count - 1) { nearEnd= true; }
+                    unpackAndPlay(onePhrase[j], signalGenerator, waveOut, nearEnd);
                     if (stopPressed) { break; }
                 }
                 if (stopPressed) { break; }
@@ -177,7 +251,8 @@ namespace PlayNotes
             minBarTime = minBar * minNoteDuration * 3;
         }
 
-        private void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, WaveOutEvent waveOut)
+        private void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, 
+            WaveOutEvent waveOut, bool towardsEnd)
         {
             int playTime;
             bool playRest;
@@ -191,13 +266,17 @@ namespace PlayNotes
             signalGenerator.FrequencyEnd = frequency * SweepSize;
             Console.Write(signalGenerator.Frequency.ToString() + " ");
 
-            if (playRest)
+            bool okayToRest = false;
+            if ((!towardsEnd) || prevRest) { okayToRest = true; }
+
+            if (playRest && okayToRest)
             {
                 waveOut.Stop();
                 Console.WriteLine("X");
                 Console.Write("Rest ");
+                prevRest = true;
             }
-            else { waveOut.Play(); }
+            else { waveOut.Play(); prevRest = false; }
 
             // Wait for the duration of the note
 
@@ -312,6 +391,95 @@ namespace PlayNotes
             int sweepPct = (int)(SweepSize * 100);
             lblSweep.Text = "Sweep: " + sweepPct.ToString() + "%";
         }
+
+        private void upDownKey_ValueChanged(object sender, EventArgs e)
+        {
+            int newVal = (int)upDownKey.Value;
+            int oldLowFreq = tbMinFreq.Value;
+            int oldHighFreq = tbMaxFreq.Value; 
+            int newFreq;
+
+            try
+            {
+                if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldLowFreq, "higher"); }
+                else { newFreq = ComputeNewFreq(oldLowFreq, "lower"); }
+                tbMinFreq.Value = newFreq;
+                if (newVal > oldUpDown) { newFreq = ComputeNewFreq(oldHighFreq, "higher"); }
+                else { newFreq = ComputeNewFreq(oldHighFreq, "lower"); }
+                tbMaxFreq.Value = newFreq;
+            }
+            catch
+            {
+                tbMinFreq.Value = oldLowFreq;
+                tbMaxFreq.Value = oldHighFreq;
+            }
+
+            oldUpDown = newVal;
+            return;
+
+            int ComputeNewFreq(int freqIn, string direction)
+            {
+                double logFreq = Math.Log10(freqIn);
+                double logFreq10;
+                if (direction == "higher")
+                    { logFreq10 = Convert.ToDouble(logFreq * freqNormalizer) + .5; }
+                else
+                    { logFreq10 = Convert.ToDouble(logFreq * freqNormalizer) - .5; }
+                int freqBack = (int)(Math.Pow(10, ((double)logFreq10 / freqNormalizer)));
+                return freqBack;
+            }
+        }
+
+        private void btnSaveKey_Click(object sender, EventArgs e)
+        {
+            // if key doesn't already exists, add it
+            keyMatchesExisting = false;
+            int KeyNum = (int)(tbKey.Text.ToUpper().ToCharArray()[0]);
+            int hUK = (int)(highestUnusedKey.ToCharArray()[0]);
+            if (KeyNum < hUK) { keyMatchesExisting = true; }
+            if (!keyMatchesExisting)
+            {
+                AddKeyToSettingsList();
+                BumpGen(); return;
+            }
+            // find matching key and replace it
+            foreach (settingsStruct oneKey in keySettings)
+            {
+                if (oneKey.Generator != Generator) { continue; }
+                keySettings.Remove(oneKey);
+                AddKeyToSettingsList();
+                break;
+            }
+        }
+
+        private void BumpGen()
+        {
+            int priorKeyNum = (int)(tbKey.Text.ToCharArray()[0]);
+            string newKey = char.ConvertFromUtf32(priorKeyNum + 1);
+            tbKey.Text = newKey;
+            Generator = newKey;
+            highestUnusedKey = newKey;
+        }
+
+        private void tbKey_TextChanged(object sender, EventArgs e)
+        {
+            if (stillLoading) return;
+            if (disableCascade) { disableCascade = false; return; }
+            if (tbKey.Text.Length == 0) { return; }
+            int KeyNum = (int)(tbKey.Text.ToUpper().ToCharArray()[0]);
+            int hUK = (int)(highestUnusedKey.ToCharArray()[0]);
+            if (KeyNum >= hUK) 
+            {
+                disableCascade = true;
+                tbKey.Text = highestUnusedKey; 
+                return; 
+            }
+            tbKey.Text = tbKey.Text.ToUpper().Substring(0, 1);
+            Generator = tbKey.Text;
+            // locate the settings for this key and implement them
+            DataRow[] theSettings = mySettings.Select("Generator = '" + Generator + "'");
+            SettingsFromDatarow(theSettings[0]);
+            SetTheSliders();
+        }
     }
 }
-
