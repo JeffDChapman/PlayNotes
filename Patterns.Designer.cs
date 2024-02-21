@@ -57,6 +57,7 @@
             this.tbCustomPattern.Name = "tbCustomPattern";
             this.tbCustomPattern.Size = new System.Drawing.Size(299, 26);
             this.tbCustomPattern.TabIndex = 4;
+            this.tbCustomPattern.TextChanged += new System.EventHandler(this.tbCustomPattern_TextChanged);
             // 
             // rbYourOwn
             // 

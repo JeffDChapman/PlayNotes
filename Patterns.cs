@@ -25,6 +25,7 @@ namespace PlayNotes
         {
             InitializeComponent();
             myParent = parent;
+            myParent.numOfPhrases = 1;
         }
 
         private void btnPlayPattern_Click(object sender, EventArgs e)
@@ -65,10 +66,7 @@ namespace PlayNotes
                     genCode += playChar;
                     List<MyPiano.NoteStruct> phraseBack = FindExistingNotes(genCode);
                     if (phraseBack == null)
-                    {
-                        CreateAndPlay(genCode);
-                        continue;
-                    }
+                        { CreateAndPlay(genCode); continue; }
                     // play the existing phrase
                     PlayThePhrase(phraseBack);
                     continue;
@@ -82,12 +80,14 @@ namespace PlayNotes
             Console.WriteLine("Will create music for new code: " + genCode);
             myParent.tbKey.Text = genCode.Substring(0, 1);
             Application.DoEvents();
-            myParent.numOfPhrases = 1;
+            myParent.onePhrase.Clear();
             myParent.BuildNotePhrase(myParent.onePhrase, myParent.random);
             PlayThePhrase(myParent.onePhrase);
             onePhrase myPhrase = new onePhrase();
             myPhrase.genCodeID = genCode;
-            myPhrase.noteList = myParent.onePhrase;
+            myPhrase.noteList = new List<MyPiano.NoteStruct>();
+            foreach (MyPiano.NoteStruct noteSpec in myParent.onePhrase)
+                { myPhrase.noteList.Add(noteSpec); }
             phraseList.Add(myPhrase);
         }
 
@@ -114,10 +114,21 @@ namespace PlayNotes
             foreach (onePhrase myPhrase in phraseList)
             {
                 string chkGenCode = myPhrase.genCodeID;
-                if (chkGenCode == genCode) { return myPhrase.noteList; }
-                Console.WriteLine("Found: " + myPhrase.noteList);
+                if (chkGenCode == genCode) 
+                {
+                    Console.Write("Found: ");
+                    foreach (MyPiano.NoteStruct noteSpec in myPhrase.noteList)
+                        { Console.Write(noteSpec.Notefrequency.ToString() + " "); }
+                    Console.WriteLine();
+                    return myPhrase.noteList;
+                }
             }
             return null;
+        }
+
+        private void tbCustomPattern_TextChanged(object sender, EventArgs e)
+        {
+            rbYourOwn.Checked = true;
         }
     }
 }

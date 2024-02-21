@@ -8,6 +8,8 @@ using System.Data;
 
 namespace PlayNotes
 {
+    // Copyright 2024 J.D. Chapman -- All Rights Reserved
+
     public partial class MyPiano : Form
     {
         #region Private Variables
@@ -292,6 +294,7 @@ namespace PlayNotes
             int playTime;
             bool playRest;
             double frequency;
+            random = new Random(Guid.NewGuid().GetHashCode());
             if (BarMult == 0) { PlayByLength(); }
                 else { PlayByTime(); }
 
@@ -312,6 +315,7 @@ namespace PlayNotes
             void PlayByTime()
             {
                 int totalTime = 0; int thisBarLen = random.Next(1, BarMult + 1) * minBar;
+                if (thisBarLen > maxBar) { thisBarLen = maxBar; }
                 while (totalTime < thisBarLen * minNoteDuration * 2)
                 {
                     GetAnote(random, out playTime, out playRest, out frequency);
