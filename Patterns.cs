@@ -1,0 +1,87 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace PlayNotes
+{
+    public partial class Patterns : Form
+    {
+        private MyPiano myParent;
+
+        private struct NoteStruct
+            { public int NoteTime; public bool NoteRest; public double Notefrequency; }
+        private struct onePhrase
+            { public string genCodeID; public List<NoteStruct> noteList; }
+
+        private List<onePhrase> phraseList = new List<onePhrase>;
+
+        public Patterns(MyPiano parent)
+        {
+            InitializeComponent();
+            myParent = parent;
+        }
+
+        private void btnPlayPattern_Click(object sender, EventArgs e)
+        {
+            string playPattern = "";
+            if (rbYourOwn.Checked) { PlayPattern(tbCustomPattern.Text); return; }
+            if (rbA1A1.Checked) { playPattern = makePatternA1A1(); }
+            if (rbA1A1A2.Checked) { playPattern = makePatternA1A1A2(); }
+            if (rbA1B1A2B2.Checked) { playPattern = makePatternA1B1A2B2(); }
+            PlayPattern(playPattern);
+        }
+
+        private string makePatternA1B1A2B2()
+        {
+            throw new NotImplementedException();
+        }
+
+        private string makePatternA1A1A2()
+        {
+            throw new NotImplementedException();
+        }
+
+        private string makePatternA1A1()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PlayPattern(string patternText)
+        {
+            string genCode = "";
+            for (int i = 0; i < patternText.Length; i++)
+            {
+                string playChar = patternText.Substring(i, 1);
+                if (playChar == " ") { continue; }
+                if (Char.IsNumber(playChar,0)) 
+                {
+                    genCode += playChar;
+                    List<NoteStruct> phraseBack = FindExistingNotes(genCode);
+                    if (phraseBack == null) 
+                    {
+                        // generate and add the phrase
+                    }
+                    // play the phrase
+                    continue;
+                }
+                genCode = playChar;
+            }
+        }
+
+        private List<NoteStruct> FindExistingNotes(string genCode)
+        {
+            foreach (onePhrase myPhrase in phraseList)
+            {
+                string chkGenCode = myPhrase.genCodeID;
+                if (chkGenCode == genCode) { return myPhrase.noteList; }
+            }
+            return null;
+        }
+    }
+}

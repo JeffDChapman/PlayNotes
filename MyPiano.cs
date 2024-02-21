@@ -52,7 +52,6 @@ namespace PlayNotes
         }
         private List<settingsStruct> keySettings = new List<settingsStruct>();
 
-
         public MyPiano()
         {
             InitializeComponent();
@@ -490,6 +489,17 @@ namespace PlayNotes
             tbKey.Text = highestUnusedKey;
             Generator = highestUnusedKey;
             btnNewKey.Visible = false;
+        }
+
+        private void btnPatterns_Click(object sender, EventArgs e)
+        {
+            Patterns myPatterns = new Patterns(this);
+            myPatterns.ShowDialog();
+        }
+
+        private void MyPiano_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveSettings();
         }
     }
 }
