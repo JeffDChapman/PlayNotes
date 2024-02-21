@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NAudio.Wave.SampleProviders;
+using NAudio.Wave;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,12 +16,10 @@ namespace PlayNotes
     {
         private MyPiano myParent;
 
-        private struct NoteStruct
-            { public int NoteTime; public bool NoteRest; public double Notefrequency; }
         private struct onePhrase
-            { public string genCodeID; public List<NoteStruct> noteList; }
+            { public string genCodeID; public List<MyPiano.NoteStruct> noteList; }
 
-        private List<onePhrase> phraseList = new List<onePhrase>;
+        private List<onePhrase> phraseList = new List<onePhrase>();
 
         public Patterns(MyPiano parent)
         {
@@ -58,28 +58,64 @@ namespace PlayNotes
             for (int i = 0; i < patternText.Length; i++)
             {
                 string playChar = patternText.Substring(i, 1);
+                Console.WriteLine(playChar);
                 if (playChar == " ") { continue; }
-                if (Char.IsNumber(playChar,0)) 
+                if (Char.IsNumber(playChar,0))
                 {
                     genCode += playChar;
-                    List<NoteStruct> phraseBack = FindExistingNotes(genCode);
-                    if (phraseBack == null) 
+                    List<MyPiano.NoteStruct> phraseBack = FindExistingNotes(genCode);
+                    if (phraseBack == null)
                     {
-                        // generate and add the phrase
+                        CreateAndPlay(genCode);
+                        continue;
                     }
-                    // play the phrase
+                    // play the existing phrase
+                    PlayThePhrase(phraseBack);
                     continue;
                 }
                 genCode = playChar;
             }
         }
 
-        private List<NoteStruct> FindExistingNotes(string genCode)
+        private void CreateAndPlay(string genCode)
         {
+            Console.WriteLine("Will create music for new code: " + genCode);
+            myParent.tbKey.Text = genCode.Substring(0, 1);
+            Application.DoEvents();
+            myParent.numOfPhrases = 1;
+            myParent.BuildNotePhrase(myParent.onePhrase, myParent.random);
+            PlayThePhrase(myParent.onePhrase);
+            onePhrase myPhrase = new onePhrase();
+            myPhrase.genCodeID = genCode;
+            myPhrase.noteList = myParent.onePhrase;
+            phraseList.Add(myPhrase);
+        }
+
+        private void PlayThePhrase(List<MyPiano.NoteStruct> phraseBack)
+        {
+            using (var waveOut = new WaveOutEvent())
+            {
+                // Create a new WaveProvider32 with the SignalGenerator
+                var waveProvider = myParent.signalGenerator.ToWaveProvider();
+                waveOut.Init(waveProvider);
+
+                bool nearEnd = false;
+                for (int j = 0; j < phraseBack.Count; j++)
+                {
+                    if (j == phraseBack.Count - 1) { nearEnd = true; }
+                    myParent.unpackAndPlay(phraseBack[j], myParent.signalGenerator, waveOut, nearEnd);
+                }
+            }
+        }
+
+        private List<MyPiano.NoteStruct> FindExistingNotes(string genCode)
+        {
+            Console.WriteLine("Searching For " + genCode);
             foreach (onePhrase myPhrase in phraseList)
             {
                 string chkGenCode = myPhrase.genCodeID;
                 if (chkGenCode == genCode) { return myPhrase.noteList; }
+                Console.WriteLine("Found: " + myPhrase.noteList);
             }
             return null;
         }

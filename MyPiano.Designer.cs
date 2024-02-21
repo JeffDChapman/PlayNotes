@@ -397,11 +397,11 @@
         private System.Windows.Forms.Label lblSweep;
         private System.Windows.Forms.TrackBar tbSweep;
         private System.Windows.Forms.Label lblKey;
-        private System.Windows.Forms.TextBox tbKey;
         private System.Windows.Forms.NumericUpDown upDownKey;
         private System.Windows.Forms.Button btnSaveKey;
         private System.Windows.Forms.Button btnNewKey;
         private System.Windows.Forms.Button btnPatterns;
+        public System.Windows.Forms.TextBox tbKey;
     }
 }
 

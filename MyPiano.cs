@@ -15,7 +15,6 @@ namespace PlayNotes
         private int minFrequency = 300;
         private int maxFrequency = 1200;
         private int minNoteDuration = 300;
-        private int numOfPhrases = 3;
         private int freqNormalizer = 16;
         private int minBar = 2;
         private int maxBar = 4;
@@ -34,9 +33,13 @@ namespace PlayNotes
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
 
-        private struct NoteStruct
+        public int numOfPhrases = 3;
+        public Random random = new Random(Guid.NewGuid().GetHashCode());
+
+        public struct NoteStruct
             { public int NoteTime; public bool NoteRest; public double Notefrequency; }
-        private List<NoteStruct> onePhrase;
+        public List<NoteStruct> onePhrase = new List<NoteStruct>();
+        public SignalGenerator signalGenerator = new SignalGenerator(2500, 1);
 
         private struct settingsStruct
         {
@@ -174,13 +177,13 @@ namespace PlayNotes
             MakeMusic();
         }
 
-        private void MakeMusic()
+        public void MakeMusic()
         {
             // Create a new instance of WaveOutEvent
             using (var waveOut = new WaveOutEvent())
             {
                 // Create a new instance of SignalGenerator
-                var signalGenerator = new SignalGenerator((int)(maxFrequency * 1.5), 1);
+                //var signalGenerator = new SignalGenerator((int)(maxFrequency * 1.5), 1);
                 signalGenerator.Type = SignalGeneratorType.Sweep;
                 signalGenerator.SweepLengthSecs = 2;
 
@@ -190,15 +193,11 @@ namespace PlayNotes
                 // Initiate playback
                 waveOut.Init(waveProvider);
 
-                // Random number generator
-                Random random = new Random(Guid.NewGuid().GetHashCode());
-
                 ComputeBarTime();
 
                 // Generate and play random phrases
                 for (int i = 0; i < numOfPhrases; i++)
                 {
-                    onePhrase = new List<NoteStruct>();
                     BuildNotePhrase(onePhrase, random);
                     PlayPhraseTwice(waveOut, signalGenerator);
                 }
@@ -252,7 +251,7 @@ namespace PlayNotes
             minBarTime = minBar * minNoteDuration * 3;
         }
 
-        private void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, 
+        public void unpackAndPlay(NoteStruct noteStruct, SignalGenerator signalGenerator, 
             WaveOutEvent waveOut, bool towardsEnd)
         {
             int playTime;
@@ -288,7 +287,7 @@ namespace PlayNotes
             Application.DoEvents();
         }
 
-        private void BuildNotePhrase(List<NoteStruct> onePhrase, Random random)
+        public void BuildNotePhrase(List<NoteStruct> onePhrase, Random random)
         {
             int playTime;
             bool playRest;
