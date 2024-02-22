@@ -40,17 +40,38 @@ namespace PlayNotes
 
         private string makePatternA1B1A2B2()
         {
-            throw new NotImplementedException();
+            string playPattern = "";
+            for (int i = 0; i < myParent.numOfPhrases; i++)
+            {
+                playPattern += "A" + (i + 1).ToString();
+                playPattern += "B" + (i + 1).ToString();
+            }
+            return playPattern;
         }
 
         private string makePatternA1A1A2()
         {
-            throw new NotImplementedException();
+            string playPattern = "";
+            for (int i = 0; i < myParent.numOfPhrases; i++)
+            {
+                int j = i * 2;
+                if (j + 2 > 9) { break; }
+                playPattern += "A" + (j + 1).ToString();
+                playPattern += "A" + (j + 1).ToString();
+                playPattern += "A" + (j + 2).ToString();
+            }
+            return playPattern;
         }
 
         private string makePatternA1A1()
         {
-            throw new NotImplementedException();
+            string playPattern = "";
+            for (int i = 0; i < myParent.numOfPhrases; i++)
+            {
+                playPattern += "A" + (i + 1).ToString();
+                playPattern += "A" + (i + 1).ToString();
+            }
+            return playPattern;
         }
 
         private void PlayPattern(string patternText)
