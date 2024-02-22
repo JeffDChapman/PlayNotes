@@ -31,10 +31,10 @@ namespace PlayNotes
         private bool stillLoading = true;
         private bool firstTimeFlag = false;
         private bool disableCascade;
-        private DataTable mySettings = new DataTable("saveSettings");
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
 
+        public DataTable mySettings = new DataTable("saveSettings");
         public int numOfPhrases = 3;
         public Random random = new Random(Guid.NewGuid().GetHashCode());
 
@@ -200,6 +200,7 @@ namespace PlayNotes
                 // Generate and play random phrases
                 for (int i = 0; i < numOfPhrases; i++)
                 {
+                    onePhrase.Clear();
                     BuildNotePhrase(onePhrase, random);
                     PlayPhraseTwice(waveOut, signalGenerator);
                 }
@@ -209,10 +210,11 @@ namespace PlayNotes
 
                 if (stopPressed) { return; }
 
-                if (!cbContinuous.Checked)
+                if ((!cbContinuous.Checked) && (!this.Visible))
                     { this.Close(); Application.Exit(); }
 
-                btnGo_Click(this, null);
+                if (cbContinuous.Checked) { btnGo_Click(this, null); }
+                else { btnGo.Text = "Play Phrase"; }
             }
         }
 

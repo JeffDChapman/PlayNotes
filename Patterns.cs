@@ -25,7 +25,7 @@ namespace PlayNotes
         {
             InitializeComponent();
             myParent = parent;
-            myParent.numOfPhrases = 1;
+            if (myParent.mySettings.Rows.Count > 1) { rbA1B1A2B2.Enabled = true; }
         }
 
         private void btnPlayPattern_Click(object sender, EventArgs e)
