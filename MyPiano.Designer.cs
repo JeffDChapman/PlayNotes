@@ -51,6 +51,7 @@
             this.upDownKey = new System.Windows.Forms.NumericUpDown();
             this.btnSaveKey = new System.Windows.Forms.Button();
             this.btnNewKey = new System.Windows.Forms.Button();
+            this.btnPatterns = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNoteDur)).BeginInit();
@@ -65,9 +66,9 @@
             // btnGo
             // 
             this.btnGo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnGo.Location = new System.Drawing.Point(455, 449);
+            this.btnGo.Location = new System.Drawing.Point(69, 498);
             this.btnGo.Name = "btnGo";
-            this.btnGo.Size = new System.Drawing.Size(121, 52);
+            this.btnGo.Size = new System.Drawing.Size(121, 40);
             this.btnGo.TabIndex = 0;
             this.btnGo.Text = "Play Phrase";
             this.btnGo.UseVisualStyleBackColor = false;
@@ -76,7 +77,7 @@
             // cbContinuous
             // 
             this.cbContinuous.AutoSize = true;
-            this.cbContinuous.Location = new System.Drawing.Point(457, 520);
+            this.cbContinuous.Location = new System.Drawing.Point(206, 507);
             this.cbContinuous.Name = "cbContinuous";
             this.cbContinuous.Size = new System.Drawing.Size(116, 24);
             this.cbContinuous.TabIndex = 1;
@@ -262,7 +263,7 @@
             // lblKey
             // 
             this.lblKey.AutoSize = true;
-            this.lblKey.Location = new System.Drawing.Point(22, 458);
+            this.lblKey.Location = new System.Drawing.Point(22, 451);
             this.lblKey.Name = "lblKey";
             this.lblKey.Size = new System.Drawing.Size(44, 20);
             this.lblKey.TabIndex = 18;
@@ -272,7 +273,7 @@
             // 
             this.tbKey.BackColor = System.Drawing.Color.Silver;
             this.tbKey.ForeColor = System.Drawing.Color.Navy;
-            this.tbKey.Location = new System.Drawing.Point(69, 456);
+            this.tbKey.Location = new System.Drawing.Point(69, 449);
             this.tbKey.Name = "tbKey";
             this.tbKey.Size = new System.Drawing.Size(38, 26);
             this.tbKey.TabIndex = 19;
@@ -296,7 +297,7 @@
             // btnSaveKey
             // 
             this.btnSaveKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnSaveKey.Location = new System.Drawing.Point(122, 452);
+            this.btnSaveKey.Location = new System.Drawing.Point(122, 445);
             this.btnSaveKey.Name = "btnSaveKey";
             this.btnSaveKey.Size = new System.Drawing.Size(87, 34);
             this.btnSaveKey.TabIndex = 21;
@@ -307,7 +308,7 @@
             // btnNewKey
             // 
             this.btnNewKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnNewKey.Location = new System.Drawing.Point(222, 452);
+            this.btnNewKey.Location = new System.Drawing.Point(222, 445);
             this.btnNewKey.Name = "btnNewKey";
             this.btnNewKey.Size = new System.Drawing.Size(87, 34);
             this.btnNewKey.TabIndex = 22;
@@ -316,11 +317,24 @@
             this.btnNewKey.Visible = false;
             this.btnNewKey.Click += new System.EventHandler(this.btnNewKey_Click);
             // 
+            // btnPatterns
+            // 
+            this.btnPatterns.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.btnPatterns.ForeColor = System.Drawing.Color.Maroon;
+            this.btnPatterns.Location = new System.Drawing.Point(460, 498);
+            this.btnPatterns.Name = "btnPatterns";
+            this.btnPatterns.Size = new System.Drawing.Size(132, 40);
+            this.btnPatterns.TabIndex = 23;
+            this.btnPatterns.Text = "Patterns...";
+            this.btnPatterns.UseVisualStyleBackColor = false;
+            this.btnPatterns.Click += new System.EventHandler(this.btnPatterns_Click);
+            // 
             // MyPiano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(612, 560);
+            this.Controls.Add(this.btnPatterns);
             this.Controls.Add(this.btnNewKey);
             this.Controls.Add(this.btnSaveKey);
             this.Controls.Add(this.upDownKey);
@@ -347,6 +361,7 @@
             this.Name = "MyPiano";
             this.Text = "My Piano";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MyPiano_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.tbMinFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNoteDur)).EndInit();
@@ -382,10 +397,11 @@
         private System.Windows.Forms.Label lblSweep;
         private System.Windows.Forms.TrackBar tbSweep;
         private System.Windows.Forms.Label lblKey;
-        private System.Windows.Forms.TextBox tbKey;
         private System.Windows.Forms.NumericUpDown upDownKey;
         private System.Windows.Forms.Button btnSaveKey;
         private System.Windows.Forms.Button btnNewKey;
+        private System.Windows.Forms.Button btnPatterns;
+        public System.Windows.Forms.TextBox tbKey;
     }
 }
 
