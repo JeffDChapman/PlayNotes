@@ -52,6 +52,8 @@
             this.btnSaveKey = new System.Windows.Forms.Button();
             this.btnNewKey = new System.Windows.Forms.Button();
             this.btnPatterns = new System.Windows.Forms.Button();
+            this.lblMaxJump = new System.Windows.Forms.Label();
+            this.tbMaxJump = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNoteDur)).BeginInit();
@@ -61,12 +63,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSweep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.upDownKey)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMaxJump)).BeginInit();
             this.SuspendLayout();
             // 
             // btnGo
             // 
             this.btnGo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnGo.Location = new System.Drawing.Point(69, 498);
+            this.btnGo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnGo.Location = new System.Drawing.Point(69, 560);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(121, 40);
             this.btnGo.TabIndex = 0;
@@ -77,7 +81,7 @@
             // cbContinuous
             // 
             this.cbContinuous.AutoSize = true;
-            this.cbContinuous.Location = new System.Drawing.Point(206, 507);
+            this.cbContinuous.Location = new System.Drawing.Point(206, 569);
             this.cbContinuous.Name = "cbContinuous";
             this.cbContinuous.Size = new System.Drawing.Size(116, 24);
             this.cbContinuous.TabIndex = 1;
@@ -199,7 +203,7 @@
             // lblMinBar
             // 
             this.lblMinBar.AutoSize = true;
-            this.lblMinBar.Location = new System.Drawing.Point(21, 285);
+            this.lblMinBar.Location = new System.Drawing.Point(21, 347);
             this.lblMinBar.Name = "lblMinBar";
             this.lblMinBar.Size = new System.Drawing.Size(111, 20);
             this.lblMinBar.TabIndex = 13;
@@ -208,7 +212,7 @@
             // tbMinBar
             // 
             this.tbMinBar.LargeChange = 4;
-            this.tbMinBar.Location = new System.Drawing.Point(150, 277);
+            this.tbMinBar.Location = new System.Drawing.Point(150, 339);
             this.tbMinBar.Maximum = 16;
             this.tbMinBar.Minimum = 1;
             this.tbMinBar.Name = "tbMinBar";
@@ -220,7 +224,7 @@
             // lblMaxBar
             // 
             this.lblMaxBar.AutoSize = true;
-            this.lblMaxBar.Location = new System.Drawing.Point(21, 337);
+            this.lblMaxBar.Location = new System.Drawing.Point(21, 399);
             this.lblMaxBar.Name = "lblMaxBar";
             this.lblMaxBar.Size = new System.Drawing.Size(115, 20);
             this.lblMaxBar.TabIndex = 15;
@@ -229,7 +233,7 @@
             // tbMaxBar
             // 
             this.tbMaxBar.LargeChange = 4;
-            this.tbMaxBar.Location = new System.Drawing.Point(150, 330);
+            this.tbMaxBar.Location = new System.Drawing.Point(150, 392);
             this.tbMaxBar.Maximum = 16;
             this.tbMaxBar.Minimum = 1;
             this.tbMaxBar.Name = "tbMaxBar";
@@ -241,7 +245,7 @@
             // lblSweep
             // 
             this.lblSweep.AutoSize = true;
-            this.lblSweep.Location = new System.Drawing.Point(21, 390);
+            this.lblSweep.Location = new System.Drawing.Point(21, 452);
             this.lblSweep.Name = "lblSweep";
             this.lblSweep.Size = new System.Drawing.Size(107, 20);
             this.lblSweep.TabIndex = 17;
@@ -249,7 +253,7 @@
             // 
             // tbSweep
             // 
-            this.tbSweep.Location = new System.Drawing.Point(150, 383);
+            this.tbSweep.Location = new System.Drawing.Point(150, 445);
             this.tbSweep.Maximum = 120;
             this.tbSweep.Minimum = 100;
             this.tbSweep.Name = "tbSweep";
@@ -263,7 +267,7 @@
             // lblKey
             // 
             this.lblKey.AutoSize = true;
-            this.lblKey.Location = new System.Drawing.Point(22, 451);
+            this.lblKey.Location = new System.Drawing.Point(22, 513);
             this.lblKey.Name = "lblKey";
             this.lblKey.Size = new System.Drawing.Size(44, 20);
             this.lblKey.TabIndex = 18;
@@ -273,7 +277,7 @@
             // 
             this.tbKey.BackColor = System.Drawing.Color.Silver;
             this.tbKey.ForeColor = System.Drawing.Color.Navy;
-            this.tbKey.Location = new System.Drawing.Point(69, 449);
+            this.tbKey.Location = new System.Drawing.Point(69, 511);
             this.tbKey.Name = "tbKey";
             this.tbKey.Size = new System.Drawing.Size(38, 26);
             this.tbKey.TabIndex = 19;
@@ -297,7 +301,7 @@
             // btnSaveKey
             // 
             this.btnSaveKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnSaveKey.Location = new System.Drawing.Point(122, 445);
+            this.btnSaveKey.Location = new System.Drawing.Point(122, 507);
             this.btnSaveKey.Name = "btnSaveKey";
             this.btnSaveKey.Size = new System.Drawing.Size(87, 34);
             this.btnSaveKey.TabIndex = 21;
@@ -308,7 +312,7 @@
             // btnNewKey
             // 
             this.btnNewKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnNewKey.Location = new System.Drawing.Point(222, 445);
+            this.btnNewKey.Location = new System.Drawing.Point(222, 507);
             this.btnNewKey.Name = "btnNewKey";
             this.btnNewKey.Size = new System.Drawing.Size(87, 34);
             this.btnNewKey.TabIndex = 22;
@@ -321,7 +325,7 @@
             // 
             this.btnPatterns.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.btnPatterns.ForeColor = System.Drawing.Color.Maroon;
-            this.btnPatterns.Location = new System.Drawing.Point(460, 498);
+            this.btnPatterns.Location = new System.Drawing.Point(460, 560);
             this.btnPatterns.Name = "btnPatterns";
             this.btnPatterns.Size = new System.Drawing.Size(132, 40);
             this.btnPatterns.TabIndex = 23;
@@ -329,11 +333,35 @@
             this.btnPatterns.UseVisualStyleBackColor = false;
             this.btnPatterns.Click += new System.EventHandler(this.btnPatterns_Click);
             // 
+            // lblMaxJump
+            // 
+            this.lblMaxJump.AutoSize = true;
+            this.lblMaxJump.Location = new System.Drawing.Point(21, 287);
+            this.lblMaxJump.Name = "lblMaxJump";
+            this.lblMaxJump.Size = new System.Drawing.Size(98, 20);
+            this.lblMaxJump.TabIndex = 25;
+            this.lblMaxJump.Text = "Max Jump: 6";
+            // 
+            // tbMaxJump
+            // 
+            this.tbMaxJump.LargeChange = 4;
+            this.tbMaxJump.Location = new System.Drawing.Point(150, 280);
+            this.tbMaxJump.Maximum = 30;
+            this.tbMaxJump.Minimum = 2;
+            this.tbMaxJump.Name = "tbMaxJump";
+            this.tbMaxJump.Size = new System.Drawing.Size(442, 69);
+            this.tbMaxJump.SmallChange = 2;
+            this.tbMaxJump.TabIndex = 24;
+            this.tbMaxJump.Value = 6;
+            this.tbMaxJump.ValueChanged += new System.EventHandler(this.tbMaxJump_ValueChanged);
+            // 
             // MyPiano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(612, 560);
+            this.ClientSize = new System.Drawing.Size(612, 619);
+            this.Controls.Add(this.lblMaxJump);
+            this.Controls.Add(this.tbMaxJump);
             this.Controls.Add(this.btnPatterns);
             this.Controls.Add(this.btnNewKey);
             this.Controls.Add(this.btnSaveKey);
@@ -371,6 +399,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSweep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.upDownKey)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbMaxJump)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -402,6 +431,8 @@
         private System.Windows.Forms.Button btnNewKey;
         private System.Windows.Forms.Button btnPatterns;
         public System.Windows.Forms.TextBox tbKey;
+        private System.Windows.Forms.Label lblMaxJump;
+        private System.Windows.Forms.TrackBar tbMaxJump;
     }
 }
 
