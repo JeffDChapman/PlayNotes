@@ -18,6 +18,7 @@ namespace PlayNotes
         private int maxFrequency = 1200;
         private int minNoteDuration = 300;
         private int freqNormalizer = 16;
+        private int maxJump = 6;
         private int minBar = 2;
         private int maxBar = 4;
         private float SweepSize = 1.03f;
@@ -31,6 +32,7 @@ namespace PlayNotes
         private bool stillLoading = true;
         private bool firstTimeFlag = false;
         private bool disableCascade;
+        private int priorLogFreq10 = 0;
         private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
 
@@ -50,6 +52,7 @@ namespace PlayNotes
             public int minNoteDuration;
             public int numOfPhrases;
             public int freqNormalizer;
+            public int maxJump;
             public int minBar;
             public int maxBar;
             public float SweepSize;
@@ -66,6 +69,7 @@ namespace PlayNotes
             mySettings.Columns.Add("minNoteDuration");
             mySettings.Columns.Add("numOfPhrases");
             mySettings.Columns.Add("freqNormalizer");
+            mySettings.Columns.Add("maxJump");
             mySettings.Columns.Add("minBar");
             mySettings.Columns.Add("maxBar");
             mySettings.Columns.Add("SweepSize");
@@ -89,8 +93,8 @@ namespace PlayNotes
             foreach (settingsStruct oneKey in keySettings)
             {
                 allRows.Add(oneKey.minFrequency, oneKey.maxFrequency, oneKey.minNoteDuration, 
-                    oneKey.numOfPhrases, oneKey.freqNormalizer, oneKey.minBar, oneKey.maxBar, 
-                    oneKey.SweepSize, oneKey.Generator);
+                    oneKey.numOfPhrases, oneKey.freqNormalizer, oneKey.maxJump,
+                    oneKey.minBar, oneKey.maxBar, oneKey.SweepSize, oneKey.Generator);
             }
             DataTable xmlOut = null;
             mySettings.DefaultView.Sort = "Generator";
@@ -127,25 +131,27 @@ namespace PlayNotes
             stillLoading = false;
         }
 
-        private void SettingsFromDatarow(DataRow theSettings)
+        public void SettingsFromDatarow(DataRow theSettings)
         {
             minFrequency = Convert.ToInt16(theSettings["minFrequency"]);
             maxFrequency = Convert.ToInt16(theSettings["maxFrequency"]);
             minNoteDuration = Convert.ToInt16(theSettings["minNoteDuration"]);
             numOfPhrases = Convert.ToInt16(theSettings["numOfPhrases"]);
             freqNormalizer = Convert.ToInt16(theSettings["freqNormalizer"]);
+            maxJump = Convert.ToInt16(theSettings["maxJump"]);
             minBar = Convert.ToInt16(theSettings["minBar"]);
             maxBar = Convert.ToInt16(theSettings["maxBar"]);
             SweepSize = (float)Convert.ToDouble(theSettings["SweepSize"]);
         }
 
-        private void SetTheSliders()
+        public void SetTheSliders()
         {
             tbMinFreq.Value = minFrequency;
             tbMaxFreq.Value = maxFrequency;
             tbNoteDur.Value = minNoteDuration;
             tbPhrases.Value = numOfPhrases;
             tbDensity.Value = freqNormalizer;
+            tbMaxJump.Value = maxJump;
             tbMinBar.Value = minBar;
             tbMaxBar.Value = maxBar;
             tbSweep.Value = (int)((SweepSize + .01) * 100);
@@ -158,6 +164,7 @@ namespace PlayNotes
             keySaver.minNoteDuration = minNoteDuration;
             keySaver.numOfPhrases = numOfPhrases;
             keySaver.freqNormalizer = freqNormalizer;
+            keySaver.maxJump = maxJump;
             keySaver.minBar = minBar; keySaver.maxBar = maxBar;
             keySaver.SweepSize = SweepSize;
             keySaver.Generator = Generator;
@@ -166,14 +173,15 @@ namespace PlayNotes
 
         private void btnGo_Click(object sender, EventArgs e)
         {
+            (btnGo.BackColor, btnGo.ForeColor) = (btnGo.ForeColor, btnGo.BackColor);
             if (btnGo.Text == "Play Phrase") { btnGo.Text = "Stop"; stopPressed = false; }
-            else if (!cbContinuous.Checked)
-            {
-                stopPressed = true;
-                btnGo.Text = "Play Phrase";
-                SaveSettings();
-                return;
-            }
+                else if (!cbContinuous.Checked)
+                {
+                    stopPressed = true;
+                    btnGo.Text = "Play Phrase";
+                    SaveSettings();
+                    return;
+                }
 
             if (firstTimeFlag) { btnSaveKey_Click(this, null); firstTimeFlag = false; }
             MakeMusic();
@@ -297,6 +305,8 @@ namespace PlayNotes
             bool playRest;
             double frequency;
             random = new Random(Guid.NewGuid().GetHashCode());
+            priorLogFreq10 = 0;
+
             if (BarMult == 0) { PlayByLength(); }
                 else { PlayByTime(); }
 
@@ -346,6 +356,12 @@ namespace PlayNotes
         {
             double logFreq = Math.Log10(frequency);
             int logFreq10 = Convert.ToInt16(logFreq * freqNormalizer);
+            if (priorLogFreq10 != 0)
+            {
+                if (logFreq10 > priorLogFreq10 + maxJump) { logFreq10 = priorLogFreq10 + maxJump; }
+                if (logFreq10 < priorLogFreq10 - maxJump) { logFreq10 = priorLogFreq10 - maxJump; }
+            }
+            priorLogFreq10 = logFreq10;
             return (float) (Math.Pow(10, ((double)logFreq10 / freqNormalizer)));
         }
 
@@ -377,6 +393,12 @@ namespace PlayNotes
         {
             freqNormalizer = tbDensity.Value;
             lblNoteDensity.Text = "Note Density: " + freqNormalizer.ToString();
+        }
+
+        private void tbMaxJump_ValueChanged(object sender, EventArgs e)
+        {
+            maxJump = tbMaxJump.Value;
+            lblMaxJump.Text = "Max Jump: " + maxJump.ToString();
         }
 
         private void tbMinBar_ValueChanged(object sender, EventArgs e)

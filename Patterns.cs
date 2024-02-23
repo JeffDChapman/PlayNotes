@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.SoundFont;
+using System.Drawing.Imaging;
 
 namespace PlayNotes
 {
@@ -31,6 +33,7 @@ namespace PlayNotes
         private void btnPlayPattern_Click(object sender, EventArgs e)
         {
             string playPattern = "";
+            tbCustomPattern.Text = tbCustomPattern.Text.ToUpper();
             if (rbYourOwn.Checked) { PlayPattern(tbCustomPattern.Text); return; }
             if (rbA1A1.Checked) { playPattern = makePatternA1A1(); }
             if (rbA1A1A2.Checked) { playPattern = makePatternA1A1A2(); }
@@ -89,7 +92,7 @@ namespace PlayNotes
                     if (phraseBack == null)
                         { CreateAndPlay(genCode); continue; }
                     // play the existing phrase
-                    PlayThePhrase(phraseBack);
+                    PlayThePhrase(phraseBack, genCode);
                     continue;
                 }
                 genCode = playChar;
@@ -103,7 +106,7 @@ namespace PlayNotes
             Application.DoEvents();
             myParent.onePhrase.Clear();
             myParent.BuildNotePhrase(myParent.onePhrase, myParent.random);
-            PlayThePhrase(myParent.onePhrase);
+            PlayThePhrase(myParent.onePhrase, genCode);
             onePhrase myPhrase = new onePhrase();
             myPhrase.genCodeID = genCode;
             myPhrase.noteList = new List<MyPiano.NoteStruct>();
@@ -112,8 +115,16 @@ namespace PlayNotes
             phraseList.Add(myPhrase);
         }
 
-        private void PlayThePhrase(List<MyPiano.NoteStruct> phraseBack)
+        private void PlayThePhrase(List<MyPiano.NoteStruct> phraseBack, string genCode)
         {
+            string Generator = genCode.ToUpper().Substring(0, 1);
+            myParent.tbKey.Text = Generator;
+            // locate the settings for this key and implement them
+            DataRow[] theSettings = myParent.mySettings.Select("Generator = '" + Generator + "'");
+            myParent.SettingsFromDatarow(theSettings[0]);
+            myParent.SetTheSliders();
+            Application.DoEvents();
+
             using (var waveOut = new WaveOutEvent())
             {
                 // Create a new WaveProvider32 with the SignalGenerator
