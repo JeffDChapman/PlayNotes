@@ -393,6 +393,13 @@ namespace PlayNotes
         {
             freqNormalizer = tbDensity.Value;
             lblNoteDensity.Text = "Note Density: " + freqNormalizer.ToString();
+            int holdJump = maxJump;
+            tbMaxJump.Value = 2;
+            tbMaxJump.Maximum = freqNormalizer;
+            Application.DoEvents();
+            if (holdJump > freqNormalizer) { holdJump = freqNormalizer; }
+            tbMaxJump.Value = holdJump;
+            Application.DoEvents();
         }
 
         private void tbMaxJump_ValueChanged(object sender, EventArgs e)

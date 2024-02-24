@@ -138,6 +138,8 @@ namespace PlayNotes
                     myParent.unpackAndPlay(phraseBack[j], myParent.signalGenerator, waveOut, nearEnd);
                 }
             }
+            System.Threading.Thread.SpinWait(2000);
+            System.Threading.Thread.Sleep(1000);
         }
 
         private List<MyPiano.NoteStruct> FindExistingNotes(string genCode)
