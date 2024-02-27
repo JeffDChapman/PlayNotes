@@ -36,6 +36,7 @@
             this.rbA1A1A2 = new System.Windows.Forms.RadioButton();
             this.rbA1A1 = new System.Windows.Forms.RadioButton();
             this.btnPlayPattern = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.gbPatternOptions.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -118,19 +119,33 @@
             this.btnPlayPattern.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlayPattern.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnPlayPattern.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnPlayPattern.Location = new System.Drawing.Point(218, 277);
+            this.btnPlayPattern.Location = new System.Drawing.Point(263, 275);
             this.btnPlayPattern.Name = "btnPlayPattern";
-            this.btnPlayPattern.Size = new System.Drawing.Size(132, 41);
+            this.btnPlayPattern.Size = new System.Drawing.Size(92, 41);
             this.btnPlayPattern.TabIndex = 1;
             this.btnPlayPattern.Text = "Play";
             this.btnPlayPattern.UseVisualStyleBackColor = false;
             this.btnPlayPattern.Click += new System.EventHandler(this.btnPlayPattern_Click);
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.BackColor = System.Drawing.Color.Maroon;
+            this.btnRefresh.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.btnRefresh.Location = new System.Drawing.Point(156, 275);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(92, 41);
+            this.btnRefresh.TabIndex = 2;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = false;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // Patterns
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(369, 330);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnPlayPattern);
             this.Controls.Add(this.gbPatternOptions);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -153,5 +168,6 @@
         private System.Windows.Forms.RadioButton rbA1A1;
         private System.Windows.Forms.Button btnPlayPattern;
         private System.Windows.Forms.ComboBox cbMRU;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }

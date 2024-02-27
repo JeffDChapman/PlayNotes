@@ -35,7 +35,7 @@ namespace PlayNotes
                 foreach (var oneLine in lines)
                     { MRUitems.Add(oneLine.ToString());  }
             } 
-            catch { cbMRU.Visible = false; return; }
+            catch { cbMRU.Enabled = false; return; }
         }
 
         private void btnPlayPattern_Click(object sender, EventArgs e)
@@ -192,6 +192,11 @@ namespace PlayNotes
         {
             int itemSel = cbMRU.SelectedIndex;
             tbCustomPattern.Text = cbMRU.Items[itemSel].ToString();
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            phraseList.Clear();
         }
     }
 }
