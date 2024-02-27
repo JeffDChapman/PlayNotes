@@ -33,9 +33,9 @@ namespace PlayNotes
         private bool firstTimeFlag = false;
         private bool disableCascade;
         private int priorLogFreq10 = 0;
-        private string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         #endregion
 
+        public string setDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         public DataTable mySettings = new DataTable("saveSettings");
         public int numOfPhrases = 3;
         public Random random = new Random(Guid.NewGuid().GetHashCode());

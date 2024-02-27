@@ -1,16 +1,9 @@
-﻿using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using NAudio.SoundFont;
-using System.Drawing.Imaging;
+using System.IO;
 
 namespace PlayNotes
 {
@@ -22,19 +15,40 @@ namespace PlayNotes
             { public string genCodeID; public List<MyPiano.NoteStruct> noteList; }
 
         private List<onePhrase> phraseList = new List<onePhrase>();
+        private string MRUfile; 
 
         public Patterns(MyPiano parent)
         {
             InitializeComponent();
             myParent = parent;
             if (myParent.mySettings.Rows.Count > 1) { rbA1B1A2B2.Enabled = true; }
+            MRUfile = myParent.setDir + "\\PatternsMRU.txt";
+            LoadMRUlist();
+        }
+
+        private void LoadMRUlist()
+        {
+            ComboBox.ObjectCollection MRUitems = cbMRU.Items;
+            try 
+            { 
+                var lines = File.ReadLines(MRUfile);
+                foreach (var oneLine in lines)
+                    { MRUitems.Add(oneLine.ToString());  }
+            } 
+            catch { cbMRU.Enabled = false; return; }
         }
 
         private void btnPlayPattern_Click(object sender, EventArgs e)
         {
-            string playPattern = "";
             tbCustomPattern.Text = tbCustomPattern.Text.ToUpper();
-            if (rbYourOwn.Checked) { PlayPattern(tbCustomPattern.Text); return; }
+            string playPattern = tbCustomPattern.Text;
+            if (rbYourOwn.Checked) 
+            {
+                try { cbMRU.Items.Remove(playPattern); } catch { }
+                cbMRU.Items.Insert(0, playPattern);
+                PlayPattern(tbCustomPattern.Text); 
+                return; 
+            }
             if (rbA1A1.Checked) { playPattern = makePatternA1A1(); }
             if (rbA1A1A2.Checked) { playPattern = makePatternA1A1A2(); }
             if (rbA1B1A2B2.Checked) { playPattern = makePatternA1B1A2B2(); }
@@ -163,6 +177,26 @@ namespace PlayNotes
         private void tbCustomPattern_TextChanged(object sender, EventArgs e)
         {
             rbYourOwn.Checked = true;
+        }
+
+        private void Patterns_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            StreamWriter mruWriter = File.CreateText(MRUfile);
+            foreach (var oneItem in cbMRU.Items)
+                { mruWriter.WriteLine(oneItem.ToString()); }
+            mruWriter.Flush();
+            mruWriter.Close();
+        }
+
+        private void cbMRU_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int itemSel = cbMRU.SelectedIndex;
+            tbCustomPattern.Text = cbMRU.Items[itemSel].ToString();
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            phraseList.Clear();
         }
     }
 }
