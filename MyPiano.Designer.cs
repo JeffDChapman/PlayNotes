@@ -54,6 +54,7 @@
             this.btnPatterns = new System.Windows.Forms.Button();
             this.lblMaxJump = new System.Windows.Forms.Label();
             this.tbMaxJump = new System.Windows.Forms.TrackBar();
+            this.btnSaveOverlay = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMaxFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNoteDur)).BeginInit();
@@ -301,7 +302,7 @@
             // btnSaveKey
             // 
             this.btnSaveKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnSaveKey.Location = new System.Drawing.Point(122, 490);
+            this.btnSaveKey.Location = new System.Drawing.Point(122, 491);
             this.btnSaveKey.Name = "btnSaveKey";
             this.btnSaveKey.Size = new System.Drawing.Size(87, 34);
             this.btnSaveKey.TabIndex = 21;
@@ -312,7 +313,7 @@
             // btnNewKey
             // 
             this.btnNewKey.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnNewKey.Location = new System.Drawing.Point(222, 490);
+            this.btnNewKey.Location = new System.Drawing.Point(222, 491);
             this.btnNewKey.Name = "btnNewKey";
             this.btnNewKey.Size = new System.Drawing.Size(87, 34);
             this.btnNewKey.TabIndex = 22;
@@ -355,6 +356,18 @@
             this.tbMaxJump.Value = 6;
             this.tbMaxJump.ValueChanged += new System.EventHandler(this.tbMaxJump_ValueChanged);
             // 
+            // btnSaveOverlay
+            // 
+            this.btnSaveOverlay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.btnSaveOverlay.ForeColor = System.Drawing.Color.Black;
+            this.btnSaveOverlay.Location = new System.Drawing.Point(122, 491);
+            this.btnSaveOverlay.Name = "btnSaveOverlay";
+            this.btnSaveOverlay.Size = new System.Drawing.Size(87, 34);
+            this.btnSaveOverlay.TabIndex = 26;
+            this.btnSaveOverlay.Text = "Save";
+            this.btnSaveOverlay.UseVisualStyleBackColor = false;
+            this.btnSaveOverlay.Visible = false;
+            // 
             // MyPiano
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -386,6 +399,7 @@
             this.Controls.Add(this.tbMinFreq);
             this.Controls.Add(this.cbContinuous);
             this.Controls.Add(this.btnGo);
+            this.Controls.Add(this.btnSaveOverlay);
             this.Name = "MyPiano";
             this.Text = "My Piano";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
@@ -433,6 +447,7 @@
         public System.Windows.Forms.TextBox tbKey;
         private System.Windows.Forms.Label lblMaxJump;
         private System.Windows.Forms.TrackBar tbMaxJump;
+        private System.Windows.Forms.Button btnSaveOverlay;
     }
 }
 
