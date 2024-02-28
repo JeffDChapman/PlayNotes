@@ -474,7 +474,7 @@ namespace PlayNotes
             if (KeyNum < hUK) { keyMatchesExisting = true; }
             if (!keyMatchesExisting)
             {
-                AddKeyToSettingsList();
+                AddKeyToSettingsList(); SaveSettings();
                 BumpGen(); return;
             }
             // find matching key and replace it
@@ -482,7 +482,8 @@ namespace PlayNotes
             {
                 if (oneKey.Generator != Generator) { continue; }
                 keySettings.Remove(oneKey);
-                AddKeyToSettingsList();
+                AddKeyToSettingsList(); SaveSettings();
+                btnNewKey.Visible = true;
                 break;
             }
         }
