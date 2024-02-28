@@ -467,6 +467,12 @@ namespace PlayNotes
 
         private void btnSaveKey_Click(object sender, EventArgs e)
         {
+            // special effects
+            btnSaveOverlay.Visible = true;
+            btnSaveOverlay.BringToFront();
+            Application.DoEvents();
+            System.Threading.Thread.SpinWait(2000);
+            System.Threading.Thread.Sleep(1000);
             // if key doesn't already exists, add it
             keyMatchesExisting = false;
             int KeyNum = (int)(tbKey.Text.ToUpper().ToCharArray()[0]);
@@ -474,7 +480,10 @@ namespace PlayNotes
             if (KeyNum < hUK) { keyMatchesExisting = true; }
             if (!keyMatchesExisting)
             {
-                AddKeyToSettingsList();
+                AddKeyToSettingsList(); SaveSettings();
+                btnSaveOverlay.Visible = false;
+                btnSaveKey.BringToFront();
+                Application.DoEvents();
                 BumpGen(); return;
             }
             // find matching key and replace it
@@ -482,7 +491,11 @@ namespace PlayNotes
             {
                 if (oneKey.Generator != Generator) { continue; }
                 keySettings.Remove(oneKey);
-                AddKeyToSettingsList();
+                AddKeyToSettingsList(); SaveSettings();
+                btnSaveOverlay.Visible = false;
+                btnSaveKey.BringToFront();
+                Application.DoEvents();
+                btnNewKey.Visible = true;
                 break;
             }
         }
