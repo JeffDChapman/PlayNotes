@@ -413,12 +413,14 @@ namespace PlayNotes
         {
             minBar = tbMinBar.Value;
             lblMinBar.Text = "Min Bar Len: " + minBar.ToString();
+            if (minBar > maxBar) { tbMaxBar.Value = minBar; }
         }
 
         private void tbMaxBar_ValueChanged(object sender, EventArgs e)
         {
             maxBar = tbMaxBar.Value;
             lblMaxBar.Text = "Max Bar Len: " + maxBar.ToString();
+            if (minBar > maxBar) { tbMinBar.Value = maxBar; }
         }
 
         private void tbSweep_ValueChanged(object sender, EventArgs e)
