@@ -312,7 +312,7 @@ namespace PlayNotes
 
             void PlayByLength()
             {
-                int phraseLen = random.Next(2 * minBar, (2 * maxBar) + 1);
+                int phraseLen = random.Next(minBar, maxBar + 1);
                 for (int i = 0; i < phraseLen; i++)
                 {
                     GetAnote(random, out playTime, out playRest, out frequency);
@@ -365,6 +365,7 @@ namespace PlayNotes
             return (float) (Math.Pow(10, ((double)logFreq10 / freqNormalizer)));
         }
 
+        #region Slider Change Events
         private void tbMinFreq_ValueChanged(object sender, EventArgs e)
         {
             minFrequency = tbMinFreq.Value;
@@ -412,12 +413,14 @@ namespace PlayNotes
         {
             minBar = tbMinBar.Value;
             lblMinBar.Text = "Min Bar Len: " + minBar.ToString();
+            if (minBar > maxBar) { tbMaxBar.Value = minBar; }
         }
 
         private void tbMaxBar_ValueChanged(object sender, EventArgs e)
         {
             maxBar = tbMaxBar.Value;
             lblMaxBar.Text = "Max Bar Len: " + maxBar.ToString();
+            if (minBar > maxBar) { tbMinBar.Value = maxBar; }
         }
 
         private void tbSweep_ValueChanged(object sender, EventArgs e)
@@ -464,6 +467,7 @@ namespace PlayNotes
                 return freqBack;
             }
         }
+        #endregion
 
         private void btnSaveKey_Click(object sender, EventArgs e)
         {
